@@ -82,12 +82,12 @@ import Message from 'muse-ui-message';
                   console.log(res);
                   if (res.data.code == 0) {
                     localStorage.setItem("token", res.data.dataPlus);
-                    Message.alert(res.data.msg);
+                    this.$toast.success(res.data.msg);
                     localStorage.setItem("ms_userName", this.validateForm.userName);
                     this.$router.push("/");
                   }
                   else{
-                    Message.alert(res.data.msg);
+                    this.$toast.error(res.data.msg);
                   }
                 }
               },
