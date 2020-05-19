@@ -11,6 +11,7 @@ import Cookies from 'js-cookie'
 import  axios from 'axios'
 import 'muse-ui-message/dist/muse-ui-message.css';
 import Message from 'muse-ui-message';
+import Router from 'vue-router'; 
 
 const toastConfig = {
   position: 'bottom-start',               // 弹出的位置
@@ -27,11 +28,19 @@ Vue.use(Loading);
 Vue.use(MuseUI)
 Vue.use(Message);
 Vue.use(Toast,toastConfig)
+
+Vue.use(Router)
+const VueRouterPush = Router.prototype.push 
+Router.prototype.push = function push (to) {//同一个路由重复添加，达到返回首页的效果
+    return VueRouterPush.call(this, to).catch(err => err)
+}
+
 new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+
 
 // 添加请求拦截器，在请求头中加token
 axios.interceptors.request.use(

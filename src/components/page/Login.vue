@@ -18,7 +18,7 @@
       <mu-card-actions>
         <mu-form-item>
           <mu-button color="secondary" @click="submit">登录</mu-button>
-          <mu-button @click="navigateTo('/')">先随便逛逛</mu-button>
+          <mu-button @click="navigateTo('/indexpage')">先随便逛逛</mu-button>
         </mu-form-item>
       </mu-card-actions>
       </mu-form>
@@ -82,12 +82,12 @@ import Message from 'muse-ui-message';
                   console.log(res);
                   if (res.data.code == 0) {
                     localStorage.setItem("token", res.data.dataPlus);
-                    Message.alert(res.data.msg);
+                    this.$toast.success(res.data.msg);
                     localStorage.setItem("ms_userName", this.validateForm.userName);
                     this.$router.push("/");
                   }
                   else{
-                    Message.alert(res.data.msg);
+                    this.$toast.error(res.data.msg);
                   }
                 }
               },
