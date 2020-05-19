@@ -60,6 +60,12 @@
           </mu-list-item-action>
           <mu-list-item-title>查看个人班课</mu-list-item-title>
         </mu-list-item>
+        <mu-list-item button @click="navigateTo('/test')">
+          <mu-list-item-action>
+            <mu-icon value="note"></mu-icon>
+          </mu-list-item-action>
+          <mu-list-item-title>测试页面</mu-list-item-title>
+        </mu-list-item>
       </mu-list>
     </mu-drawer>
   </div>

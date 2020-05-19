@@ -43,7 +43,15 @@ const routes = [{
           meta: {
               title: '首页'
           }
-      }
+      },
+      {
+        path: '/test',
+        component: () =>
+            import ( /* webpackChunkName: "test" */ '../components/page/test.vue'),
+        meta: {
+            title: '测试页面'
+        }
+    }
   ]
 }
 ]
