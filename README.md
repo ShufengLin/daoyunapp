@@ -1,7 +1,7 @@
 # 到云移动端开发
 
 ## 官方文档链接
-[MintUI](https://mint-ui.github.io/#!/zh-cn)  
+[Muse-UI](https://muse-ui.org/#/zh-CN)  
 [Vue](https://cn.vuejs.org/)
 
 ## Project setup
