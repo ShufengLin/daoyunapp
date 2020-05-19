@@ -2,7 +2,7 @@
   <div class="hello">
         <mu-paper class="banner">
           <img src="../../assets/logo26.png" class="logo">
-          <h1>{{ hotelInfo.hotelName }}</h1>
+          <h1>{{ appInfo.appName }}</h1>
           <h2>便捷的教学助手</h2>
           <p v-if="!isLogin()">
             <mu-button color="secondary" @click="navigateTo('/login')">
@@ -25,9 +25,6 @@
   import indexImg1 from '../../assets/imgs/index1.png'
   import indexImg2 from '../../assets/imgs/index2.png'
   import indexImg3 from '../../assets/imgs/index3.png'
-  import colImg from '../../assets/banner/banner2.jpg'
-  import Cookies from 'js-cookie'
-  //import { getAllHotel } from "@/api/hotel"
 
   export default {
   name: 'IndexPage',
@@ -36,23 +33,10 @@
       indexImg1,
       indexImg2,
       indexImg3,
-      hotelInfo: {
-        hotelName: "到云",
+      appInfo: {
+        appName: "到云",
         address: ""
-      },
-      list: [{
-        image: colImg,
-        title: 'Breakfast',
-        author: 'Myron'
-      }, {
-        image: colImg,
-        title: 'Burger',
-        author: 'Linyu'
-      }, {
-        image: colImg,
-        title: 'Camera',
-        author: 'ruolin'
-      }]
+      }
     }
   },
   created: function() {
@@ -61,8 +45,8 @@
   },
   methods:{
     isLogin() {
-      const username = Cookies.get("username")
-      if (username == null || username === '') {
+      let token = localStorage.getItem('token');
+      if (token === 'null' || token === '') {
         return false;
       }
       else {
@@ -73,13 +57,7 @@
       this.$router.push(val);
     },
     fetchData(){
-    //   getAllHotel().then(res => {
-    //     this.hotelInfo = res.data[0]
-    //   }).catch(err => {
-    //     console.log(err)
-    //     this.$toast.error(err.toString())
-    //   })
-    },
+    }
     
   }
 }
