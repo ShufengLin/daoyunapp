@@ -18,7 +18,7 @@
       <mu-card-actions>
         <mu-form-item>
           <mu-button color="secondary" @click="submit">登录</mu-button>
-          <mu-button @click="navigateTo('/')">先随便逛逛</mu-button>
+          <mu-button @click="navigateTo('/indexpage')">先随便逛逛</mu-button>
         </mu-form-item>
       </mu-card-actions>
       </mu-form>

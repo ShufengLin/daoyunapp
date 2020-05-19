@@ -8,36 +8,35 @@
         <h2>到云</h2>
       </mu-button>
 
-        <mu-menu v-if="isLogin()" slot="right" open-on-hover>
-          <mu-button flat>
-            <mu-chip class="demo-chip" color="primary">
-              <mu-avatar :size="32" color="secondary">
-                <mu-icon value="account_circle"></mu-icon>
-              </mu-avatar>
-              {{ username }}
-            </mu-chip>
-          </mu-button>
-          <mu-list slot="content">
-            <mu-list-item button @click="navigateTo('/login')">
-              <mu-list-item-content>
-                <mu-list-item-title>查看个人信息</mu-list-item-title>
-              </mu-list-item-content>
-            </mu-list-item>
-            <mu-list-item button @click="navigateTo('/login')">
-              <mu-list-item-content>
-                <mu-list-item-title>查看我的班课</mu-list-item-title>
-              </mu-list-item-content>
-            </mu-list-item>
-            <mu-list-item button @click="logout()">
-              <mu-list-item-content>
-                <mu-list-item-title>注销</mu-list-item-title>
-              </mu-list-item-content>
-            </mu-list-item>
-          </mu-list>
-        </mu-menu>
+      <mu-menu v-if="isLogin()" slot="right" open-on-hover>
+        <mu-button flat>
+          <mu-chip class="demo-chip" color="primary">
+            <mu-avatar :size="32" color="secondary">
+              <mu-icon value="account_circle"></mu-icon>
+            </mu-avatar>
+            {{ username }}
+          </mu-chip>
+        </mu-button>
+        <mu-list slot="content">
+          <mu-list-item button @click="navigateTo('/login')">
+            <mu-list-item-content>
+              <mu-list-item-title>查看个人信息</mu-list-item-title>
+            </mu-list-item-content>
+          </mu-list-item>
+          <mu-list-item button @click="navigateTo('/login')">
+            <mu-list-item-content>
+              <mu-list-item-title>查看我的班课</mu-list-item-title>
+            </mu-list-item-content>
+          </mu-list-item>
+          <mu-list-item button @click="logout()">
+            <mu-list-item-content>
+              <mu-list-item-title>注销</mu-list-item-title>
+            </mu-list-item-content>
+          </mu-list-item>
+        </mu-list>
+      </mu-menu>
 
-        <mu-button v-if="!isLogin()" round flat slot="right" @click="navigateTo('/login')">登 录</mu-button>
-
+      <mu-button v-if="!isLogin()" round flat slot="right" @click="navigateTo('/login')">登 录</mu-button>
     </mu-appbar>
     <router-view class="layout" />
 
@@ -82,13 +81,13 @@ export default {
       }
     };
   },
-    beforeRouteEnter(to, from, next) {
+  beforeRouteEnter(to, from, next) {
     next(vm => {
       console.log(vm);
       // 每次进入路由执行
       vm.isLogin();
     });
-    },
+  },
   created: function() {
     this.isLogin();
     this.fetchData();
@@ -96,7 +95,7 @@ export default {
   methods: {
     isLogin() {
       let token = localStorage.getItem("token");
-      if (token === "null" || token === "") {
+      if (token === null || token === "" || token === "undefined") {
         return false;
       } else {
         return true;
@@ -106,15 +105,11 @@ export default {
       this.$router.push(val);
     },
     logout() {
-      Cookies.remove("username");
-      Cookies.remove("user_id");
-      Cookies.remove("session");
-      Cookies.remove("order_id");
-      this.navigateTo("/");
+      localStorage.removeItem("ms_userName");
+      localStorage.removeItem("token");
+      this.navigateTo("/login");
     },
-    fetchData() {
-
-    }
+    fetchData() {}
   }
 };
 </script>

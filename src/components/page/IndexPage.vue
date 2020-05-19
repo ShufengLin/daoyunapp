@@ -44,13 +44,12 @@
     this.fetchData()
   },
   methods:{
-    isLogin() {
-      let token = localStorage.getItem('token');
-      if (token === 'null' || token === '') {
+        isLogin() {
+      let token = localStorage.getItem("token");
+      if (token === null || token === "" || token === "undefined") {
         return false;
-      }
-      else {
-        return true
+      } else {
+        return true;
       }
     },
     navigateTo(val) {
