@@ -8,6 +8,9 @@ import Toast from 'muse-ui-toast'
 import Loading from 'muse-ui-loading'
 import 'muse-ui-loading/dist/muse-ui-loading.css'
 import Cookies from 'js-cookie'
+import  axios from 'axios'
+import 'muse-ui-message/dist/muse-ui-message.css';
+import Message from 'muse-ui-message';
 
 const toastConfig = {
   position: 'bottom-start',               // 弹出的位置
@@ -22,9 +25,27 @@ const toastConfig = {
 Vue.config.productionTip = false
 Vue.use(Loading);
 Vue.use(MuseUI)
+Vue.use(Message);
 Vue.use(Toast,toastConfig)
 new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+
+// 添加请求拦截器，在请求头中加token
+axios.interceptors.request.use(
+  config => {
+    if(config.url.indexOf('/Login/checkLogin') >= 0){
+      return config;
+    }
+    else{
+      if (localStorage.getItem('token') && localStorage.getItem('token') != "undefined") {
+        config.headers.token = localStorage.getItem('token');
+      }
+      return config;
+    }
+  },
+  error => {
+    return Promise.reject(error);
+  });

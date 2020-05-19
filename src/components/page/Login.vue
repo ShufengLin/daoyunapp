@@ -4,8 +4,8 @@
       <mu-form ref="form" :model="validateForm" class="mu-demo-form">
       <mu-card-title sub-title="用户登录" title="到云"></mu-card-title>
       <mu-card-text>
-        <mu-form-item label="用户名" help-text="" prop="username" :rules="usernameRules">
-          <mu-text-field v-model="validateForm.username" prop="username"></mu-text-field>
+        <mu-form-item label="用户名" help-text="" prop="userName" :rules="usernameRules">
+          <mu-text-field v-model="validateForm.userName" prop="userName"></mu-text-field>
         </mu-form-item>
         <mu-form-item label="密码" prop="password" :rules="passwordRules">
           <mu-text-field type="password" v-model="validateForm.password" prop="password" @keyup.enter="submit"></mu-text-field>
@@ -27,9 +27,8 @@
 </template>
 
 <script>
-  //import { userLogin,getUserInfoByUsername } from "@/api/user";
-  import Cookies from 'js-cookie'
-
+import axios from "axios";
+import Message from 'muse-ui-message';
   export default {
         name: "Login",
       data () {
@@ -41,7 +40,7 @@
               { validate: (val) => !!val, message: '必须填写密码'},
             ],
             validateForm: {
-              username: '',
+              userName: '',
               password: ''
             },
             userId: null,
@@ -65,12 +64,37 @@
         clear () {
           this.$refs.form.clear();
           this.validateForm = {
-            username: '',
+            userName: '',
             password: ''
           };
         },
         login() {
-
+        axios
+            .post(
+              "http://localhost:8080/daoyunWeb/Login/checkLogin",
+              this.validateForm,
+              { headers: { "Content-Type": "application/json" } }
+            )
+            .then(
+              res => {
+                console.log(res);
+                if (res.status == 200) {
+                  console.log(res);
+                  if (res.data.code == 0) {
+                    localStorage.setItem("token", res.data.dataPlus);
+                    Message.alert(res.data.msg);
+                    localStorage.setItem("ms_userName", this.validateForm.userName);
+                    this.$router.push("/");
+                  }
+                  else{
+                    Message.alert(res.data.msg);
+                  }
+                }
+              },
+              error => {
+                console.log(error);
+              }
+            );
         },
       }
     }
