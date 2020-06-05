@@ -1,8 +1,8 @@
 <template>
   <div id="order">
-    <mu-container class="orderContainer">
+    <mu-container class="paperContainer">
       <mu-row>
-        <mu-appbar class="orderAppBar" color="primary">
+        <mu-appbar class="paperAppBar" color="primary">
           <mu-icon value="account_balance_wallet" slot="left"></mu-icon>新增条目
         </mu-appbar>
       </mu-row>
@@ -73,17 +73,21 @@ export default {
       open: false,
       trigger: null,
       listSize: 0,
+      selectTotal: 0,
       query: {
         page: 1,
         pageSize: 6,
         paperName: ""
       },
+      refreshing: false,
+      loading: false,
       paperList: []
     };
   },
   created: function() {
     this.fetchData();
     this.getData();
+    this.getDataCount();
   },
   methods: {
     navigateTo(val) {
@@ -139,7 +143,7 @@ export default {
             console.log(res);
             if (res.status == 200) {
               if (res.data.code == 0) {
-                this.paperList = res.data.data;
+                this.paperList = this.paperList.concat(res.data.data);
                 this.listSize = this.paperList.length;
                 this.$toast.success(res.data.msg);
               } else if (res.data.code == -2) {
@@ -154,13 +158,56 @@ export default {
             console.log(error);
           }
         );
+    },
+      getDataCount() {
+      //TODO 待加入搜索限定参数
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/testExample/getPaperCount",
+          { paperName: this.query.paperName },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              this.selectTotal = res.data.data;
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+      refresh () {
+      this.refreshing = true;
+      //this.$refs.container.scrollTop = 0;
+      setTimeout(() => {
+        this.refreshing = false;
+        this.paperList = [];
+        this.query.page = 1;
+        this.getData();
+        this.getDataCount();
+      }, 2000)
+    },
+    load () {
+      this.loading = true;
+      setTimeout(() => {
+        this.loading = false;
+        if(this.query.page < (this.selectTotal/this.query.pageSize)){
+          this.query.page++;
+          this.getData();
+        }else{
+          this.$toast.message("没有更多数据了");
+        }
+      }, 2000)
     }
   }
 };
 </script>
 
 <style scoped>
-.orderAppBar {
+.paperAppBar {
   height: 40px;
   width: auto !important;
   border-radius: 30px;
@@ -172,7 +219,7 @@ export default {
   color: #fff;
   padding: 10px;
 }
-.orderContainer {
+.paperContainer {
   padding: 10px;
 }
 .paperList {
