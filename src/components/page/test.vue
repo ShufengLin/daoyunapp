@@ -2,56 +2,57 @@
   <div id="order">
     <mu-container class="paperContainer">
       <mu-row>
-        <mu-appbar class="paperAppBar" color="primary">
-          <mu-icon value="account_balance_wallet" slot="left"></mu-icon>新增条目
-        </mu-appbar>
+        <mu-text-field v-model="query.paperName" placeholder="搜索paper"></mu-text-field>
+        <mu-button icon color="primary" @click="handleSearch">
+          <mu-icon value="search"></mu-icon>
+        </mu-button>
+        <mu-button fab small color="primary">
+          <mu-icon value="add"></mu-icon>
+        </mu-button>
       </mu-row>
       <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
-      <mu-list textline="three-line" class="paperList">
-        <mu-row gutter>
-          <mu-col xl="12" lg="12" md="12" sm="12" span="12">
-            <!--:style="'background-color:'+ getStaColor(order.orderStatus)"-->
-            <mu-list-item
-              avatar
-              button
-              :ripple="true"
-              class="paperItem"
-              v-for="(paper,index) in paperList"
-              @click="toDetail(paper.paperId)"
-              :key="paper.paperId"
-            >
-              <mu-list-item-action>
-                <!--<mu-avatar text-color="primary">-->
-                <mu-button style="min-width: 20px" color="primary">
-                  <!--<mu-icon value="payment" color="primary"></mu-icon>-->
-                  {{ index + 1 }}
-                </mu-button>
+        <mu-list textline="three-line" class="paperList">
+          <mu-sub-header>Paper</mu-sub-header>
+          <mu-row gutter>
+            <mu-col xl="12" lg="12" md="12" sm="12" span="12">
+              <!--:style="'background-color:'+ getStaColor(order.orderStatus)"-->
+              <mu-list-item
+                avatar
+                button
+                :ripple="true"
+                class="paperItem"
+                v-for="(paper,index) in paperList"
+                @click="toDetail(paper.paperId)"
+                :key="paper.paperId"
+              >
+                <mu-list-item-action>
+                  <!--<mu-avatar text-color="primary">-->
+                  <mu-button style="min-width: 20px" color="primary">
+                    <!--<mu-icon value="payment" color="primary"></mu-icon>-->
+                    {{ index + 1 }}
+                  </mu-button>
 
-                <!--</mu-avatar>-->
-              </mu-list-item-action>
-              <mu-list-item-content>
-                <mu-list-item-title style="color: black;font-size: 1.2em;font-weight: bolder">
-                  {{ paper.paperName }}
-                  <!--<mu-badge :content="order.orderType" color="primary"></mu-badge>-->
-                </mu-list-item-title>
-                <mu-list-item-sub-title>
-                  {{paper.paperNum}}
-                </mu-list-item-sub-title>
-                <mu-list-item-sub-title>
-                  {{paper.paperDetail}}
-                </mu-list-item-sub-title>
-              </mu-list-item-content>
-              <mu-list-item-action>
-                <!-- <mu-badge
+                  <!--</mu-avatar>-->
+                </mu-list-item-action>
+                <mu-list-item-content>
+                  <mu-list-item-title style="color: black;font-size: 1.2em;font-weight: bolder">
+                    {{ paper.paperName }}
+                    <!--<mu-badge :content="order.orderType" color="primary"></mu-badge>-->
+                  </mu-list-item-title>
+                  <mu-list-item-sub-title>{{paper.paperNum}}</mu-list-item-sub-title>
+                  <mu-list-item-sub-title>{{paper.paperDetail}}</mu-list-item-sub-title>
+                </mu-list-item-content>
+                <mu-list-item-action>
+                  <!-- <mu-badge
                   :content="order.orderStatus|getOrderStatus"
                   :color="order.orderStatus|getStatusColor"
-                ></mu-badge> -->
-                <!--<mu-button small round color="green">查看详情</mu-button>-->
-              </mu-list-item-action>
-            </mu-list-item>
-          </mu-col>
-        </mu-row>
-      </mu-list>
+                  ></mu-badge>-->
+                  <!--<mu-button small round color="green">查看详情</mu-button>-->
+                </mu-list-item-action>
+              </mu-list-item>
+            </mu-col>
+          </mu-row>
+        </mu-list>
       </mu-load-more>
       <mu-card v-show="listSize == 0" style="width: 100%; margin: 0 auto;border-radius: 5px" raised>
         <mu-card-title title="暂无条目" sub-title></mu-card-title>
@@ -159,7 +160,7 @@ export default {
           }
         );
     },
-      getDataCount() {
+    getDataCount() {
       //TODO 待加入搜索限定参数
       axios
         .post(
@@ -179,7 +180,7 @@ export default {
           }
         );
     },
-      refresh () {
+    refresh() {
       this.refreshing = true;
       //this.$refs.container.scrollTop = 0;
       setTimeout(() => {
@@ -188,37 +189,31 @@ export default {
         this.query.page = 1;
         this.getData();
         this.getDataCount();
-      }, 2000)
+      }, 2000);
     },
-    load () {
+    load() {
       this.loading = true;
       setTimeout(() => {
         this.loading = false;
-        if(this.query.page < (this.selectTotal/this.query.pageSize)){
+        if (this.query.page < this.selectTotal / this.query.pageSize) {
           this.query.page++;
           this.getData();
-        }else{
+        } else {
           this.$toast.message("没有更多数据了");
         }
-      }, 2000)
-    }
+      }, 2000);
+    },
+    handleSearch() {
+      this.paperList = [];
+      this.$set(this.query, "page", 1);
+      this.getData();
+      this.getDataCount();
+    },
   }
 };
 </script>
 
 <style scoped>
-.paperAppBar {
-  height: 40px;
-  width: auto !important;
-  border-radius: 30px;
-  /*position: -webkit-sticky;*/
-  /*position: sticky;*/
-  /*top: 0;*/
-  margin: 10px;
-  /*background-color: #e91e63;*/
-  color: #fff;
-  padding: 10px;
-}
 .paperContainer {
   padding: 10px;
 }
