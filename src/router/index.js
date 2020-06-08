@@ -51,6 +51,14 @@ const routes = [{
         meta: {
             title: '测试页面'
         }
+    },
+    {
+      path: '/addPaper',
+      component: () =>
+      import (/* webpackChunkName: "addPaper" */ '../components/page/AddPaper.vue'),
+      meta: {
+        title: '新增Paper'
+      }
     }
   ]
 }

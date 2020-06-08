@@ -6,7 +6,7 @@
         <mu-button icon color="primary" @click="handleSearch">
           <mu-icon value="search"></mu-icon>
         </mu-button>
-        <mu-button fab small color="primary">
+        <mu-button fab small color="primary" @click="addPaper()">
           <mu-icon value="add"></mu-icon>
         </mu-button>
       </mu-row>
@@ -209,6 +209,9 @@ export default {
       this.getData();
       this.getDataCount();
     },
+    addPaper(){
+      this.$router.push("/addPaper");
+    }
   }
 };
 </script>
