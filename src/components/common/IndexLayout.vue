@@ -42,6 +42,7 @@
 
     <mu-drawer :open.sync="open" :docked="docked" :z-depth="24">
       <mu-list @click="open = !open">
+        <mu-sub-header>到云</mu-sub-header>
         <mu-list-item button @click="navigateTo('/')">
           <mu-list-item-action>
             <mu-icon value="home"></mu-icon>
@@ -60,6 +61,7 @@
           </mu-list-item-action>
           <mu-list-item-title>查看个人班课</mu-list-item-title>
         </mu-list-item>
+        <mu-sub-header>测试部分</mu-sub-header>
         <mu-list-item button @click="navigateTo('/test')">
           <mu-list-item-action>
             <mu-icon value="note"></mu-icon>
