@@ -11,6 +11,7 @@
         // ak 是在百度地图开发者平台申请的密钥 详见 http://lbsyun.baidu.com/apiconsole/key */
         ak: 'D2xjGaKU7fbcrXMkoUiKiD15uPdEdOfZ'
     })
+
     export default {
         data () {
             return {
