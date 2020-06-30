@@ -52,6 +52,14 @@ const routes = [{
             title: '测试页面'
         }
     },
+  {
+      path: '/course',
+      component: () =>
+          import ( /* webpackChunkName: "test" */ '../components/page/Course.vue'),
+      meta: {
+          title: '班课页面'
+      }
+  },
     {
       path: '/addPaper',
       component: () =>
@@ -59,7 +67,15 @@ const routes = [{
       meta: {
         title: '新增Paper'
       }
-    }
+    },
+      {
+          path: '/addCourse',
+          component: () =>
+              import (/* webpackChunkName: "addPaper" */ '../components/page/AddCourse'),
+          meta: {
+              title: '新增班课'
+          }
+      }
   ]
 }
 ]

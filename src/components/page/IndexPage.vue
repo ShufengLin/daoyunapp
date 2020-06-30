@@ -11,7 +11,7 @@
             <mu-button @click="navigateTo('/register')">立即注册</mu-button>
           </p>
           <p v-else-if="isLogin()">
-            <mu-button color="secondary" @click="navigateTo('/room')">
+            <mu-button color="secondary" @click="navigateTo('/course')">
             浏览班课
             </mu-button>
             <mu-button color="" @click="navigateTo('/order')">查看个人班课</mu-button>
@@ -57,7 +57,7 @@
     },
     fetchData(){
     }
-    
+
   }
 }
 </script>
