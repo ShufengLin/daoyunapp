@@ -85,7 +85,6 @@ import Message from 'muse-ui-message';
                     this.$toast.success(res.data.msg);
                     localStorage.setItem("ms_userName", this.validateForm.userName);
                     localStorage.setItem("ms_userId", res.data.data.userId);
-                    this.$toast.success(localStorage.getItem("ms_userId"));
                     this.$router.push("/");
                   }
                   else{
