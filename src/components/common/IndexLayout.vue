@@ -121,6 +121,7 @@ export default {
     logout() {
       localStorage.removeItem("ms_userName");
       localStorage.removeItem("token");
+      localStorage.removeItem("ms_userId");
       this.navigateTo("/login");
     },
     fetchData() {}
