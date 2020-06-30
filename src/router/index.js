@@ -83,6 +83,13 @@ const routes = [{
           meta: {
               title: '新增班课'
           }
+      },{
+        path: '/signCourse',
+        component: () =>
+        import (/* webpackChunkName: "signCourse"*/ '../components/page/SignCourse'),
+        meta: {
+          title: '班课签到'
+        }
       }
   ]
 }

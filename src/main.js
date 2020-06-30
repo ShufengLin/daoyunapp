@@ -12,6 +12,9 @@ import  axios from 'axios'
 import 'muse-ui-message/dist/muse-ui-message.css';
 import Message from 'muse-ui-message';
 import Router from 'vue-router'; 
+import BaiduMap from 'vue-baidu-map'
+
+
 
 const toastConfig = {
   position: 'bottom-start',               // 弹出的位置
@@ -28,7 +31,10 @@ Vue.use(Loading);
 Vue.use(MuseUI)
 Vue.use(Message);
 Vue.use(Toast,toastConfig)
-
+Vue.use(BaiduMap, {
+  // ak 是在百度地图开发者平台申请的密钥 详见 http://lbsyun.baidu.com/apiconsole/key */
+  ak: 'D2xjGaKU7fbcrXMkoUiKiD15uPdEdOfZ'
+})
 Vue.use(Router)
 const VueRouterPush = Router.prototype.push 
 Router.prototype.push = function push (to) {//同一个路由重复添加，达到返回首页的效果
