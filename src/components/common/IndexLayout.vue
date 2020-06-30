@@ -68,6 +68,12 @@
           </mu-list-item-action>
           <mu-list-item-title>测试页面</mu-list-item-title>
         </mu-list-item>
+        <mu-list-item button @click="navigateTo('/signCourse')">
+          <mu-list-item-action>
+            <mu-icon value="note"></mu-icon>
+          </mu-list-item-action>
+          <mu-list-item-title>班课签到</mu-list-item-title>
+        </mu-list-item>
       </mu-list>
     </mu-drawer>
   </div>

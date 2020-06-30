@@ -22,17 +22,11 @@
 </template>
 
 <script>
-  import indexImg1 from '../../assets/imgs/index1.png'
-  import indexImg2 from '../../assets/imgs/index2.png'
-  import indexImg3 from '../../assets/imgs/index3.png'
 
   export default {
   name: 'IndexPage',
   data () {
     return {
-      indexImg1,
-      indexImg2,
-      indexImg3,
       appInfo: {
         appName: "到云",
         address: ""
