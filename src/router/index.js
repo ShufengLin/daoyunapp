@@ -24,6 +24,14 @@ const routes = [{
     title:'注册'
   }
 },
+    {
+        path: '/sign',
+        component:()=>
+            import (/* webpackChunkName: "sign" */'../components/page/Sign.vue'),
+        meta:{
+            title:'签到'
+        }
+    },
 {
   path: '/404',
   component: () =>
