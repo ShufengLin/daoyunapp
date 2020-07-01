@@ -107,6 +107,13 @@ const routes = [{
         meta: {
           title: '班课签到'
         }
+      },{
+        path: '/courseInfo',
+        component: () =>
+        import(/* webpackChunkName: "courseInfo"*/ '../components/page/CourseInfo'),
+        meta: {
+          title: '课程信息'
+        }
       }
   ]
 }
