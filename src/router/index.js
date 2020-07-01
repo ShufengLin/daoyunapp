@@ -60,6 +60,31 @@ const routes = [{
             title: '测试页面'
         }
     },
+  {
+      path: '/course',
+      component: () =>
+          import ( /* webpackChunkName: "test" */ '../components/page/Course.vue'),
+      meta: {
+          title: '班课页面'
+      }
+  },
+    {
+      path: '/mycourse',
+      component: () =>
+          import ( /* webpackChunkName: "test" */ '../components/page/Mycourse.vue'),
+      meta: {
+          title: '我的班课'
+      }
+    },
+  {
+      path: '/coursedetail',
+      name:'coursedetail',
+      component: () =>
+          import ( /* webpackChunkName: "test" */ '../components/page/CourseDetail.vue'),
+      meta: {
+          title: '班课学生'
+      }
+  },
     {
       path: '/addPaper',
       component: () =>
@@ -67,7 +92,22 @@ const routes = [{
       meta: {
         title: '新增Paper'
       }
-    }
+    },
+      {
+          path: '/addCourse',
+          component: () =>
+              import (/* webpackChunkName: "addPaper" */ '../components/page/AddCourse'),
+          meta: {
+              title: '新增班课'
+          }
+      },{
+        path: '/signCourse',
+        component: () =>
+        import (/* webpackChunkName: "signCourse"*/ '../components/page/SignCourse'),
+        meta: {
+          title: '班课签到'
+        }
+      }
   ]
 }
 ]

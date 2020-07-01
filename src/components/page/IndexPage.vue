@@ -11,10 +11,10 @@
             <mu-button @click="navigateTo('/register')">立即注册</mu-button>
           </p>
           <p v-else-if="isLogin()">
-            <mu-button color="secondary" @click="navigateTo('/room')">
+            <mu-button color="secondary" @click="navigateTo('/course')">
             浏览班课
             </mu-button>
-            <mu-button color="" @click="navigateTo('/order')">查看个人班课</mu-button>
+            <mu-button color="" @click="navigateTo('/mycourse')">查看个人班课</mu-button>
           </p>
         </mu-paper>
     <!-- -->
@@ -22,17 +22,11 @@
 </template>
 
 <script>
-  import indexImg1 from '../../assets/imgs/index1.png'
-  import indexImg2 from '../../assets/imgs/index2.png'
-  import indexImg3 from '../../assets/imgs/index3.png'
 
   export default {
   name: 'IndexPage',
   data () {
     return {
-      indexImg1,
-      indexImg2,
-      indexImg3,
       appInfo: {
         appName: "到云",
         address: ""
@@ -57,7 +51,7 @@
     },
     fetchData(){
     }
-    
+
   }
 }
 </script>
