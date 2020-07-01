@@ -14,7 +14,7 @@
             <mu-button color="secondary" @click="navigateTo('/course')">
             浏览班课
             </mu-button>
-            <mu-button color="" @click="navigateTo('/order')">查看个人班课</mu-button>
+            <mu-button color="" @click="navigateTo('/mycourse')">查看个人班课</mu-button>
           </p>
         </mu-paper>
     <!-- -->

@@ -12,7 +12,7 @@
             </mu-row>
             <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
                 <mu-list textline="three-line" class="paperList">
-                    <mu-sub-header>班课</mu-sub-header>
+                    <mu-sub-header>我的班课</mu-sub-header>
                     <mu-row gutter>
                         <mu-col xl="12" lg="12" md="12" sm="12" span="12">
                             <!--:style="'background-color:'+ getStaColor(order.orderStatus)"-->
@@ -70,7 +70,6 @@
         name: "test",
         data() {
             return {
-                userId: 0,
                 open: false,
                 trigger: null,
                 listSize: 0,
@@ -78,6 +77,7 @@
                 query: {
                     page: 1,
                     pageSize: 6,
+                    userId:parseInt(localStorage.getItem("ms_userId")),
                     courseName: ""
                 },
                 refreshing: false,
@@ -117,10 +117,9 @@
             },
             toDetail(id) {
                 this.$router.push({
-                    path: "/",
-                    name: "",
+                    name:'coursedetail',
                     params: {
-                        orderId: id
+                        Id: id
                     }
                 });
             },
@@ -131,11 +130,13 @@
             getData() {
                 axios
                     .post(
-                        "http://localhost:8080/daoyunWeb/course/getCourseByPage",
+                        "http://localhost:8080/daoyunWeb/course/getOwnCourseByPage",
                         {
                             page: this.query.page,
                             pageSize: this.query.pageSize,
-                            courseName: this.query.courseName
+                            userId: this.query.userId,
+                            courseName:this.query.courseName
+
                         },
                         { headers: { "Content-Type": "application/json" } }
                     )
@@ -164,8 +165,11 @@
                 //TODO 待加入搜索限定参数
                 axios
                     .post(
-                        "http://localhost:8080/daoyunWeb/course/getCourseCount",
-                        { courseName: this.query.courseName },
+                        "http://localhost:8080/daoyunWeb/course/getOwnCourseCount",
+                        {
+                            userId: this.query.userId,
+                            courseName:this.query.courseName
+                        },
                         { headers: { "Content-Type": "application/json" } }
                     )
                     .then(
@@ -185,7 +189,6 @@
                 //this.$refs.container.scrollTop = 0;
                 setTimeout(() => {
                     this.refreshing = false;
-                    this.paperList = [];
                     this.query.page = 1;
                     this.getData();
                     this.getDataCount();

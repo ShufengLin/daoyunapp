@@ -69,6 +69,23 @@ const routes = [{
       }
   },
     {
+      path: '/mycourse',
+      component: () =>
+          import ( /* webpackChunkName: "test" */ '../components/page/Mycourse.vue'),
+      meta: {
+          title: '我的班课'
+      }
+    },
+  {
+      path: '/coursedetail',
+      name:'coursedetail',
+      component: () =>
+          import ( /* webpackChunkName: "test" */ '../components/page/CourseDetail.vue'),
+      meta: {
+          title: '班课学生'
+      }
+  },
+    {
       path: '/addPaper',
       component: () =>
       import (/* webpackChunkName: "addPaper" */ '../components/page/AddPaper.vue'),

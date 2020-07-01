@@ -23,7 +23,7 @@
               <mu-list-item-title>查看个人信息</mu-list-item-title>
             </mu-list-item-content>
           </mu-list-item>
-          <mu-list-item button @click="navigateTo('/login')">
+          <mu-list-item button @click="navigateTo('/mycourse')">
             <mu-list-item-content>
               <mu-list-item-title>查看我的班课</mu-list-item-title>
             </mu-list-item-content>
@@ -49,17 +49,17 @@
           </mu-list-item-action>
           <mu-list-item-title>回到首页</mu-list-item-title>
         </mu-list-item>
-        <mu-list-item button @click="navigateTo('/indexpage')">
+        <mu-list-item button @click="navigateTo('/course')">
           <mu-list-item-action>
             <mu-icon value="hotel"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>查看班课</mu-list-item-title>
         </mu-list-item>
-        <mu-list-item button @click="navigateTo('/login')">
+        <mu-list-item button @click="navigateTo('/mycourse')">
           <mu-list-item-action>
             <mu-icon value="note"></mu-icon>
           </mu-list-item-action>
-          <mu-list-item-title>查看个人班课</mu-list-item-title>
+          <mu-list-item-title>查看我的班课</mu-list-item-title>
         </mu-list-item>
         <mu-sub-header>测试部分</mu-sub-header>
         <mu-list-item button @click="navigateTo('/test')">
