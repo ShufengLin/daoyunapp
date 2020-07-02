@@ -22,10 +22,10 @@
       <mu-card-text>{{"联系方式:"+info.phoneNumber}}</mu-card-text>
       <mu-divider></mu-divider>
       <mu-flex justify-content="center" align-items="center">
-        <mu-button flat color="primary" v-if="showAttendCourse">
+        <mu-button flat color="primary" v-if="showAttendCourse" @click="attendCourse">
           <mu-icon left value="navigate_next"></mu-icon>参加班课
         </mu-button>
-        <mu-button flat color="primary" v-if="showCourseMember">
+        <mu-button flat color="primary" v-if="showCourseMember" @click="toMember">
           <mu-icon left value="details"></mu-icon>班课成员
         </mu-button>
       </mu-flex>
@@ -45,7 +45,7 @@ export default {
   name: "courseInfo",
   data() {
     return {
-      courseId: this.$route.params.Id,
+      courseId: localStorage.getItem("courseId"),
       info: {
         courseName: "",
         courseHour: 0,
@@ -84,7 +84,7 @@ export default {
         .post(
           "http://localhost:8080/daoyunWeb/course/getCourseInfoById",
           {
-            courseId: this.courseId
+            courseId: parseInt(this.courseId)
           },
           { headers: { "Content-Type": "application/json" } }
         )
@@ -152,7 +152,7 @@ export default {
           "http://localhost:8080/daoyunWeb/courseStudent/getStudentCourseByTwoId",
           {
             userId: parseInt(localStorage.getItem("ms_userId")),
-            courseId: this.courseId
+            courseId: parseInt(this.courseId)
           },
           { headers: { "Content-Type": "application/json" } }
         )
