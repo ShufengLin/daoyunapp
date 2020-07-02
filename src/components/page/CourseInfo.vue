@@ -22,15 +22,15 @@
       <mu-card-text>{{"联系方式:"+info.phoneNumber}}</mu-card-text>
       <mu-divider></mu-divider>
       <mu-flex justify-content="center" align-items="center">
-        <mu-button flat color="primary">
+        <mu-button flat color="primary" v-if="showAttendCourse">
           <mu-icon left value="navigate_next"></mu-icon>参加班课
         </mu-button>
-        <mu-button flat color="primary">
+        <mu-button flat color="primary" v-if="showCourseMember">
           <mu-icon left value="details"></mu-icon>班课成员
         </mu-button>
       </mu-flex>
       <mu-flex justify-content="center" align-items="center">
-        <mu-button flat color="primary" @click="toSign">
+        <mu-button flat color="primary" @click="toSign" v-if="showSign">
           <mu-icon left value="person_pin"></mu-icon>签到
         </mu-button>
       </mu-flex>
@@ -56,12 +56,18 @@ export default {
         school: "",
         academy: "",
         major: "",
-        phoneNumber: ""
-      }
+        phoneNumber: "",
+        teachId: 0
+      },
+      showAttendCourse: false,
+      showCourseMember: false,
+      showSign: false,
+      studentCourse: {}
     };
   },
   created: function() {
     this.getData();
+    this.checkStudentCourse();
   },
   filters: {
     formatDate1(time) {
@@ -110,6 +116,65 @@ export default {
           courseId: this.courseId
         }
       });
+    },
+    roleController() {
+      if (localStorage.getItem("ms_roleName") == "老师") {
+        if (parseInt(localStorage.getItem("ms_userId")) == this.teachId) {
+          //如果是登录用户为老师，验证是不是该老师的课程
+          //如果是,显示班课成员，签到按钮
+          this.showAttendCourse = false;
+          this.showCourseMember = true;
+          this.showSign = true;
+        } else {
+          //如果不是该老师的课程，则禁用所有按钮，只能查看课程信息
+          this.showAttendCourse = false;
+          this.showCourseMember = false;
+          this.showSign = false;
+        }
+      } else {
+        //如果登录用户为学生,验证这个课程是不是学生正在参与的课程
+        if (this.studentCourse != null) {
+          //如果是，显示班课成员，签到按钮
+          this.showAttendCourse = false;
+          this.showCourseMember = true;
+          this.showSign = true;
+        } else {
+          //如果不是，显示参加课程按钮
+          this.showAttendCourse = true;
+          this.showCourseMember = false;
+          this.showSign = false;
+        }
+      }
+    },
+    checkStudentCourse() {
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/courseStudent/getStudentCourseByTwoId",
+          {
+            userId: parseInt(localStorage.getItem("ms_userId")),
+            courseId: this.courseId
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              if (res.data.code == 0) {
+                this.studentCourse = res.data.data;
+              } else if (res.data.code == -2) {
+                this.$router.push("/login");
+                this.$toast.error(res.data.msg);
+              } else {
+                this.$toast.error(res.data.msg);
+              }
+              this.roleController();
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
     }
   }
 };
