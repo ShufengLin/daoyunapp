@@ -69,7 +69,7 @@ export default {
     this.getData();
     this.checkStudentCourse();
     setTimeout(() => {
-    this.roleController();
+      this.roleController();
     }, 500);
   },
   filters: {
@@ -179,7 +179,7 @@ export default {
           }
         );
     },
-    toMember(){
+    toMember() {
       this.$router.push({
         name: "coursedetail",
         path: "/coursedetail",
@@ -187,6 +187,38 @@ export default {
           Id: this.courseId
         }
       });
+    },
+    attendCourse() {
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/courseStudent/attendCourse",
+          {
+            studentId: parseInt(localStorage.getItem("ms_userId")),
+            courseId: this.courseId
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              if (res.data.code == 0) {
+                this.$toast.success(res.data.msg);
+                this.showAttendCourse = false;
+                this.showCourseMember = true;
+                this.showSign =true;
+              } else if (res.data.code == -2) {
+                this.$router.push("/login");
+                this.$toast.error(res.data.msg);
+              } else {
+                this.$toast.error(res.data.msg);
+              }
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
     }
   }
 };
