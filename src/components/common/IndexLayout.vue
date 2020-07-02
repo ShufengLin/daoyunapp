@@ -81,6 +81,7 @@
 
 <script>
 import Cookies from "js-cookie";
+import axios from "axios";
 
 export default {
   name: "Index",
@@ -92,7 +93,9 @@ export default {
       right: false,
       hotelInfo: {
         address: null
-      }
+      },
+      roleName: "",
+      roleFlag: false
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -103,8 +106,21 @@ export default {
     });
   },
   created: function() {
-    this.isLogin();
-    this.fetchData();
+    let loginFlag = this.isLogin();
+    if (loginFlag) {
+    this.getUserRole();
+    const loading = this.$loading();
+    this.timer = setTimeout(() => {
+      this.checkRole();
+      let roleFlag = this.roleFlag;
+      if (!roleFlag) {
+        this.logout();
+      }
+      loading.close();
+    }, 500);
+    }
+
+
   },
   methods: {
     isLogin() {
@@ -115,6 +131,7 @@ export default {
         return true;
       }
     },
+
     navigateTo(val) {
       this.$router.push(val);
     },
@@ -122,9 +139,46 @@ export default {
       localStorage.removeItem("ms_userName");
       localStorage.removeItem("token");
       localStorage.removeItem("ms_userId");
+      localStorage.removeItem("ms_roleId");
+      localStorage.removeItem("ms_roleName");
       this.navigateTo("/login");
     },
-    fetchData() {}
+    fetchData() {},
+    getUserRole() {
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/userRole/getUserRoleByUserId",
+          { userId: localStorage.getItem("ms_userId") },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              console.log(res);
+              if (res.data.code == 0) {
+                localStorage.setItem("ms_roleId", res.data.data.roleId);
+                localStorage.setItem("ms_roleName", res.data.data.roleName);
+              } else {
+                this.$toast.error(res.data.msg);
+              }
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+    checkRole() {
+      this.roleName = localStorage.getItem("ms_roleName");
+      if (this.roleName == "老师" || this.roleName == "学生") {
+        this.$toast.success("登录成功");
+        this.roleFlag = true;
+      } else {
+        this.$toast.message("请使用老师或者学生账号登录");
+        this.roleFlag = false;
+      }
+    }
   }
 };
 </script>

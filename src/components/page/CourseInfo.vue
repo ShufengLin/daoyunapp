@@ -22,17 +22,17 @@
       <mu-card-text>{{"联系方式:"+info.phoneNumber}}</mu-card-text>
       <mu-divider></mu-divider>
       <mu-flex justify-content="center" align-items="center">
-      <mu-button flat color="primary">
-        <mu-icon left value="navigate_next"></mu-icon>参加班课
-      </mu-button>
-      <mu-button flat color="primary">
-        <mu-icon left value="details"></mu-icon>班课成员
-      </mu-button>
+        <mu-button flat color="primary">
+          <mu-icon left value="navigate_next"></mu-icon>参加班课
+        </mu-button>
+        <mu-button flat color="primary">
+          <mu-icon left value="details"></mu-icon>班课成员
+        </mu-button>
       </mu-flex>
       <mu-flex justify-content="center" align-items="center">
-      <mu-button flat color="primary">
-        <mu-icon left value="person_pin"></mu-icon>签到
-      </mu-button>
+        <mu-button flat color="primary" @click="toSign">
+          <mu-icon left value="person_pin"></mu-icon>签到
+        </mu-button>
       </mu-flex>
     </mu-card>
   </div>
@@ -40,12 +40,12 @@
 
 <script>
 import axios from "axios";
-import { formatDate } from '../../tools/date.js'
+import { formatDate } from "../../tools/date.js";
 export default {
   name: "courseInfo",
   data() {
     return {
-      courseId:this.$route.params.Id,
+      courseId: this.$route.params.Id,
       info: {
         courseName: "",
         courseHour: 0,
@@ -60,25 +60,25 @@ export default {
       }
     };
   },
-    created: function() {
+  created: function() {
     this.getData();
   },
   filters: {
     formatDate1(time) {
-    var date = new Date(time);
-    return formatDate(date, 'yyyy年MM月dd日 hh:mm:ss'); 
+      var date = new Date(time);
+      return formatDate(date, "yyyy年MM月dd日 hh:mm:ss");
     }
   },
   methods: {
     navigateTo(val) {
       this.$router.push(val);
     },
-    getData(){
-            axios
+    getData() {
+      axios
         .post(
           "http://localhost:8080/daoyunWeb/course/getCourseInfoById",
           {
-            courseId:this.courseId
+            courseId: this.courseId
           },
           { headers: { "Content-Type": "application/json" } }
         )
@@ -87,7 +87,6 @@ export default {
             console.log(res);
             if (res.status == 200) {
               if (res.data.code == 0) {
-
                 this.info = res.data.data;
                 this.$toast.success(res.data.msg);
               } else if (res.data.code == -2) {
@@ -102,6 +101,15 @@ export default {
             console.log(error);
           }
         );
+    },
+    toSign() {
+      this.$router.push({
+        name: "signCourse",
+        path: "/signCourse",
+        params: {
+          courseId: this.courseId
+        }
+      });
     }
   }
 };

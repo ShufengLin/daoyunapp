@@ -102,6 +102,7 @@ const routes = [{
           }
       },{
         path: '/signCourse',
+        name: 'signCourse',
         component: () =>
         import (/* webpackChunkName: "signCourse"*/ '../components/page/SignCourse'),
         meta: {

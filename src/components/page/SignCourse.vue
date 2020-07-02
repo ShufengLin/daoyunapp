@@ -48,7 +48,7 @@
 import axios from "axios";
 
 export default {
-  name: "SignCourse",
+  name: "signCourse",
   data() {
     return {
       remindInfo: "",
