@@ -1,14 +1,20 @@
 <template>
   <div class="sign-container">
     <mu-card class="sign-card" raised>
-      <mu-card-title title="签到" sub-title="查看你的签到信息"></mu-card-title>
+      <mu-card-title title="签到" sub-title="根据提示信息对按钮进行操作"></mu-card-title>
+      <mu-divider></mu-divider>
+      <mu-card-text>{{remindInfo}}</mu-card-text>
       <mu-row justify-content="center">
-        <mu-avatar :size="200" @click="openMap">
+        <!-- <mu-avatar :size="200" @click="openMap">
           <img src="../../assets/imgs/work1.jpeg" />
-        </mu-avatar>
+        </mu-avatar> -->
+    <mu-avatar color="blue200" :size="200" @click="openMap">
+      <mu-icon value="add_location"></mu-icon>
+    </mu-avatar>
       </mu-row>
-
       <mu-card-title sub-title="签到信息"></mu-card-title>
+      <mu-card-text>{{signInfo}}</mu-card-text>
+      <mu-divider></mu-divider>
       <mu-card-text>{{signDetailInfo}}</mu-card-text>
     </mu-card>
     <mu-dialog title="定位地图" width="360" :open.sync="mapVisible">
@@ -45,8 +51,9 @@ export default {
   name: "SignCourse",
   data() {
     return {
-      signInfo: "开始签到",
-      signDetailInfo: "",
+      remindInfo: "",
+      signInfo: "当前课程暂未发起签到",
+      signDetailInfo: "没有定位信息",
       signStatus: false,
       center: { lng: 0, lat: 0 },
       mapVisible: false,
@@ -81,6 +88,7 @@ export default {
       if (this.locData.address == "") {
         this.$toast.warning("请先点击小圆点进行定位");
       } else {
+        const loading = this.$loading();
         this.timer = setTimeout(() => {
           //设置延迟执行
           this.$toast.message(
@@ -90,7 +98,9 @@ export default {
               "," +
               this.locData.latitude
           );
+          this.signDetailInfo = this.locData.address;
           this.mapVisible = false;
+          loading.close();
         }, 500);
       }
     },
