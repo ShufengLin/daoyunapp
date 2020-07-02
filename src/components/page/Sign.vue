@@ -49,9 +49,6 @@
 
                 },{enableHighAccuracy: true})
             },
-            sign(){
-                alert('您的位置：'+ this.center.lng+','+ this.center.lat);
-            },
             beginSign() {
                 //TODO 待加入搜索限定参数
                 axios
