@@ -3,22 +3,23 @@
     <mu-card class="info-card" raised>
       <mu-card-title title="课程信息"></mu-card-title>
       <mu-card-title sub-title="课程名称"></mu-card-title>
-      <mu-card-text>{{courseInfo.courseName}}</mu-card-text>
+      <mu-card-text>{{info.courseName}}</mu-card-text>
       <mu-card-title sub-title="课时"></mu-card-title>
-      <mu-card-text>{{courseInfo.courseHour}}</mu-card-text>
+      <mu-card-text>{{info.courseHour}}</mu-card-text>
       <mu-card-title sub-title="开课时间"></mu-card-title>
-      <mu-card-text>{{courseInfo.startTime}}</mu-card-text>
+      <!-- <mu-date-picker :should-disable-date="allowedDates" :date.sync="date3"></mu-date-picker> -->
+      <mu-card-text>{{info.startTime | formatDate1}}</mu-card-text>
       <mu-card-title sub-title="上课地点"></mu-card-title>
-      <mu-card-text>{{courseInfo.coursePlace}}</mu-card-text>
+      <mu-card-text>{{info.coursePlace}}</mu-card-text>
       <mu-divider></mu-divider>
       <mu-card-title sub-title="教师信息"></mu-card-title>
-      <mu-card-text>{{teacherInfo.teacherName}}</mu-card-text>
+      <mu-card-text>{{info.userName}}</mu-card-text>
       <mu-divider></mu-divider>
-      <mu-card-text>{{teacherInfo.teacherSchool}}</mu-card-text>
-      <mu-card-text>{{teacherInfo.teacherAcademy}}</mu-card-text>
-      <mu-card-text>{{teacherInfo.teacherMajor}}</mu-card-text>
+      <mu-card-text>{{info.school}}</mu-card-text>
+      <mu-card-text>{{info.academy}}</mu-card-text>
+      <mu-card-text>{{info.major}}</mu-card-text>
       <mu-divider></mu-divider>
-      <mu-card-text>{{teacherInfo.teacherPhone}}</mu-card-text>
+      <mu-card-text>{{"联系方式:"+info.phoneNumber}}</mu-card-text>
       <mu-divider></mu-divider>
       <mu-flex justify-content="center" align-items="center">
       <mu-button flat color="primary">
@@ -39,29 +40,68 @@
 
 <script>
 import axios from "axios";
-
+import { formatDate } from '../../tools/date.js'
 export default {
-  name: "CourseInfo",
+  name: "courseInfo",
   data() {
     return {
-      courseInfo: {
+      courseId:this.$route.params.Id,
+      info: {
         courseName: "",
         courseHour: 0,
         startTime: 0,
-        coursePlace: ""
-      },
-      teacherInfo: {
-        teacherName: "",
-        teacherSchool: "",
-        teacherAcademy: "",
-        teacherMajor: "",
-        teacherPhone: 0
+        coursePlace: "",
+
+        userName: "",
+        school: "",
+        academy: "",
+        major: "",
+        phoneNumber: ""
       }
     };
+  },
+    created: function() {
+    this.getData();
+  },
+  filters: {
+    formatDate1(time) {
+    var date = new Date(time);
+    return formatDate(date, 'yyyy年MM月dd日 hh:mm:ss'); 
+    }
   },
   methods: {
     navigateTo(val) {
       this.$router.push(val);
+    },
+    getData(){
+            axios
+        .post(
+          "http://localhost:8080/daoyunWeb/course/getCourseInfoById",
+          {
+            courseId:this.courseId
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              if (res.data.code == 0) {
+
+                this.info = res.data.data;
+                this.$toast.success(res.data.msg);
+              } else if (res.data.code == -2) {
+                this.$router.push("/login");
+                this.$toast.error(res.data.msg);
+              } else {
+                this.$toast.error(res.data.msg);
+              }
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
     }
   }
 };

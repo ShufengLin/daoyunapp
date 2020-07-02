@@ -109,6 +109,7 @@ const routes = [{
         }
       },{
         path: '/courseInfo',
+        name: 'courseInfo',
         component: () =>
         import(/* webpackChunkName: "courseInfo"*/ '../components/page/CourseInfo'),
         meta: {

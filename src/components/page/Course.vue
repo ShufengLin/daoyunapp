@@ -117,9 +117,10 @@
             },
             toDetail(id) {
                 this.$router.push({
+                    name:'courseInfo',
                     path: "/courseInfo",
                     params: {
-                        courseId: id
+                        Id: id
                     }
                 });
             },
