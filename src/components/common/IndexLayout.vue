@@ -172,7 +172,7 @@ export default {
     checkRole() {
       this.roleName = localStorage.getItem("ms_roleName");
       if (this.roleName == "老师" || this.roleName == "学生") {
-        this.$toast.success("登录成功");
+        //this.$toast.success("登录成功");
         this.roleFlag = true;
       } else {
         this.$toast.message("请使用老师或者学生账号登录");

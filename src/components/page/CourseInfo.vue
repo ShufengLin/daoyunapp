@@ -45,7 +45,7 @@ export default {
   name: "courseInfo",
   data() {
     return {
-      courseId: localStorage.getItem("courseId"),
+      courseId: parseInt(localStorage.getItem("courseId")),
       info: {
         courseName: "",
         courseHour: 0,
@@ -68,6 +68,9 @@ export default {
   created: function() {
     this.getData();
     this.checkStudentCourse();
+    setTimeout(() => {
+    this.roleController();
+    }, 500);
   },
   filters: {
     formatDate1(time) {
@@ -84,7 +87,7 @@ export default {
         .post(
           "http://localhost:8080/daoyunWeb/course/getCourseInfoById",
           {
-            courseId: parseInt(this.courseId)
+            courseId: this.courseId
           },
           { headers: { "Content-Type": "application/json" } }
         )
@@ -119,7 +122,7 @@ export default {
     },
     roleController() {
       if (localStorage.getItem("ms_roleName") == "老师") {
-        if (parseInt(localStorage.getItem("ms_userId")) == this.teachId) {
+        if (parseInt(localStorage.getItem("ms_userId")) == this.info.teachId) {
           //如果是登录用户为老师，验证是不是该老师的课程
           //如果是,显示班课成员，签到按钮
           this.showAttendCourse = false;
@@ -152,7 +155,7 @@ export default {
           "http://localhost:8080/daoyunWeb/courseStudent/getStudentCourseByTwoId",
           {
             userId: parseInt(localStorage.getItem("ms_userId")),
-            courseId: parseInt(this.courseId)
+            courseId: this.courseId
           },
           { headers: { "Content-Type": "application/json" } }
         )
@@ -168,13 +171,22 @@ export default {
               } else {
                 this.$toast.error(res.data.msg);
               }
-              this.roleController();
+              //this.roleController();
             }
           },
           error => {
             console.log(error);
           }
         );
+    },
+    toMember(){
+      this.$router.push({
+        name: "coursedetail",
+        path: "/coursedetail",
+        params: {
+          Id: this.courseId
+        }
+      });
     }
   }
 };
