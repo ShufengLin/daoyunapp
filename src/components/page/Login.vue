@@ -15,15 +15,15 @@
               @keyup.enter="submit"
             ></mu-text-field>
           </mu-form-item>
-          <mu-form-item>
+          <!-- <mu-form-item>
             <mu-button flat>忘记密码？</mu-button>
             <mu-button flat @click="navigateTo('/register')">立即注册</mu-button>
-          </mu-form-item>
+          </mu-form-item> -->
         </mu-card-text>
         <mu-card-actions>
           <mu-form-item>
             <mu-button color="secondary" @click="submit">登录</mu-button>
-            <mu-button @click="navigateTo('/indexpage')">先随便逛逛</mu-button>
+            <mu-button flat @click="navigateTo('/register')">立即注册</mu-button>
           </mu-form-item>
         </mu-card-actions>
       </mu-form>
