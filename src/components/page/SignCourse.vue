@@ -345,7 +345,6 @@ export default {
         window.location.reload();
         this.signDetailInfo = this.locData.address;
         this.mapVisible = false;
-        loading.close();
       }, 500);
     }
   }

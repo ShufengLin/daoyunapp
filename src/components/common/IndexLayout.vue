@@ -121,8 +121,8 @@ export default {
   created: function() {
     let loginFlag = this.isLogin();
     if (loginFlag) {
-      this.getUserRole();
       const loading = this.$loading();
+      this.getUserRole();
       this.timer = setTimeout(() => {
         this.checkRole();
         let roleFlag = this.roleFlag;
