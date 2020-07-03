@@ -230,7 +230,7 @@
                 //this.$refs.container.scrollTop = 0;
                 setTimeout(() => {
                     this.refreshing = false;
-                    this.paperList = [];
+                    this.courseList = [];
                     this.query.page = 1;
                     this.getData();
                     this.getDataCount();
