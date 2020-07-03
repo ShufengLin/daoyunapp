@@ -62,7 +62,8 @@ export default {
       showAttendCourse: false,
       showCourseMember: false,
       showSign: false,
-      studentCourse: {}
+      studentCourse: {},
+      isSign:0
     };
   },
   created: function() {
@@ -70,6 +71,7 @@ export default {
     this.checkStudentCourse();
     setTimeout(() => {
       this.roleController();
+      this.getIsSign();
     }, 500);
   },
   filters: {
@@ -112,7 +114,19 @@ export default {
         );
     },
     toSign() {
-      this.$router.push({
+      if (localStorage.getItem("ms_roleName") == "老师"){//如果是老师，可以进入签到页面进行发起签到或者关闭签到
+        this.pushSign();
+      }
+      else{//如果是学生
+        if(this.isSign == 1){//课程状态为开启签到时，可以进入签到页面进行签到
+          this.pushSign();
+        }else{//课程状态为关闭签到时，不能进入签到页面签到
+          this.$toast.message("还没有开始签到");
+        }
+      }
+    },
+    pushSign(){
+              this.$router.push({
         name: "signCourse",
         path: "/signCourse",
         params: {
@@ -206,13 +220,33 @@ export default {
                 this.$toast.success(res.data.msg);
                 this.showAttendCourse = false;
                 this.showCourseMember = true;
-                this.showSign =true;
+                this.showSign = true;
               } else if (res.data.code == -2) {
                 this.$router.push("/login");
                 this.$toast.error(res.data.msg);
               } else {
                 this.$toast.error(res.data.msg);
               }
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+    getIsSign() {
+      //TODO 待加入搜索限定参数
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/course/getIsSign",
+          { courseId: this.courseId },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              this.isSign = res.data.data;
             }
           },
           error => {
