@@ -67,6 +67,7 @@ export default {
     };
   },
   created: function() {
+    this.courseId = parseInt(localStorage.getItem("courseId"));
     this.getData();
     this.checkStudentCourse();
     setTimeout(() => {

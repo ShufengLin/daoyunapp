@@ -118,8 +118,10 @@
                 return status;
             },
             toDetail(id) {
+                localStorage.setItem("courseId",id);
                 this.$router.push({
-                    name:'coursedetail',
+                    name:'courseInfo',
+                    path: "/courseInfo",
                     params: {
                         Id: id
                     }
