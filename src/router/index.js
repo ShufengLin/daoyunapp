@@ -24,6 +24,14 @@ const routes = [{
     title:'注册'
   }
 },
+{
+  path: '/resetPassword',
+  component:()=>
+  import (/* webpackChunkName: "resetPassword" */'../components/page/ResetPassword.vue'),
+  meta:{
+    title:'修改密码'
+  }
+},
     {
         path: '/sign',
         component:()=>
@@ -141,7 +149,6 @@ const routes = [{
           title: '个人信息'
         }
       }
-
   ]
 }
 ]

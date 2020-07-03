@@ -6,9 +6,9 @@
                 <mu-button icon color="primary" @click="handleSearch">
                     <mu-icon value="search"></mu-icon>
                 </mu-button>
-                <mu-button fab small color="primary" @click="addCourse()">
+                <!-- <mu-button fab small color="primary" @click="addCourse()">
                     <mu-icon value="add"></mu-icon>
-                </mu-button>
+                </mu-button> -->
             </mu-row>
             <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
                 <mu-list textline="three-line" class="paperList">

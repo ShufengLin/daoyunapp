@@ -28,6 +28,11 @@
               <mu-list-item-title>查看我的班课</mu-list-item-title>
             </mu-list-item-content>
           </mu-list-item>
+          <mu-list-item button @click="navigateTo('/resetPassword')">
+            <mu-list-item-content>
+              <mu-list-item-title>修改密码</mu-list-item-title>
+            </mu-list-item-content>
+          </mu-list-item>
           <mu-list-item button @click="logout()">
             <mu-list-item-content>
               <mu-list-item-title>注销</mu-list-item-title>
@@ -55,19 +60,25 @@
           </mu-list-item-action>
           <mu-list-item-title>查看班课</mu-list-item-title>
         </mu-list-item>
+        <mu-sub-header>我的</mu-sub-header>
         <mu-list-item button @click="MycourseButtonClick()">
           <mu-list-item-action>
             <mu-icon value="note"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>查看我的班课</mu-list-item-title>
         </mu-list-item>
-        <mu-sub-header>我的</mu-sub-header>
         <mu-list-item button @click="navigateTo('/personalInfo')">
           <mu-list-item-action>
             <mu-icon value="note"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>查看个人信息</mu-list-item-title>
         </mu-list-item>
+          <mu-list-item button @click="navigateTo('/resetPassword')">
+          <mu-list-item-action>
+            <mu-icon value="note"></mu-icon>
+          </mu-list-item-action>
+          <mu-list-item-title>修改密码</mu-list-item-title>
+          </mu-list-item>
         <mu-list-item button @click="logout()">
           <mu-list-item-action>
             <mu-icon value="note"></mu-icon>
@@ -87,8 +98,8 @@ export default {
   name: "Index",
   data() {
     return {
-      mycourse:"",
-      course:"",
+      mycourse: "",
+      course: "",
       username: localStorage.getItem("ms_userName"),
       open: false,
       docked: false,
@@ -110,19 +121,17 @@ export default {
   created: function() {
     let loginFlag = this.isLogin();
     if (loginFlag) {
-    this.getUserRole();
-    const loading = this.$loading();
-    this.timer = setTimeout(() => {
-      this.checkRole();
-      let roleFlag = this.roleFlag;
-      if (!roleFlag) {
-        this.logout();
-      }
-      loading.close();
-    }, 500);
+      this.getUserRole();
+      const loading = this.$loading();
+      this.timer = setTimeout(() => {
+        this.checkRole();
+        let roleFlag = this.roleFlag;
+        if (!roleFlag) {
+          this.logout();
+        }
+        loading.close();
+      }, 500);
     }
-
-
   },
   methods: {
     isLogin() {
@@ -181,30 +190,30 @@ export default {
         this.roleFlag = false;
       }
     },
-    CourseButtonClick(){
-      let rolename=localStorage.getItem("ms_roleName");
-      if (rolename == "老师"){
-        this.course="/course"
-        console.log(this.course)
-        this.navigateTo(this.course)
+    CourseButtonClick() {
+      let rolename = localStorage.getItem("ms_roleName");
+      if (rolename == "老师") {
+        this.course = "/course";
+        console.log(this.course);
+        this.navigateTo(this.course);
       }
-      if (rolename=="学生"){
-        this.course="/studentcourse"
-        console.log(this.course)
-        this.navigateTo(this.course)
+      if (rolename == "学生") {
+        this.course = "/studentcourse";
+        console.log(this.course);
+        this.navigateTo(this.course);
       }
     },
-    MycourseButtonClick(){
-      let rolename=localStorage.getItem("ms_roleName");
-      if (rolename == "老师"){
-        this.mycourse="/mycourse"
-        console.log(this.mycourse)
-        this.navigateTo(this.mycourse)
+    MycourseButtonClick() {
+      let rolename = localStorage.getItem("ms_roleName");
+      if (rolename == "老师") {
+        this.mycourse = "/mycourse";
+        console.log(this.mycourse);
+        this.navigateTo(this.mycourse);
       }
-      if (rolename=="学生"){
-        this.mycourse="/studentmycourse"
-        console.log(this.mycourse)
-        this.navigateTo(this.mycourse)
+      if (rolename == "学生") {
+        this.mycourse = "/studentmycourse";
+        console.log(this.mycourse);
+        this.navigateTo(this.mycourse);
       }
     }
   }
