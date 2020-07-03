@@ -193,6 +193,7 @@
                 //this.$refs.container.scrollTop = 0;
                 setTimeout(() => {
                     this.refreshing = false;
+                    this.courseList = [];
                     this.query.page = 1;
                     this.getData();
                     this.getDataCount();

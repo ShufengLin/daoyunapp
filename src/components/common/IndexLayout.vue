@@ -23,7 +23,7 @@
               <mu-list-item-title>查看个人信息</mu-list-item-title>
             </mu-list-item-content>
           </mu-list-item>
-          <mu-list-item button @click="navigateTo('/mycourse')">
+          <mu-list-item button @click="MycourseButtonClick()">
             <mu-list-item-content>
               <mu-list-item-title>查看我的班课</mu-list-item-title>
             </mu-list-item-content>
@@ -49,13 +49,13 @@
           </mu-list-item-action>
           <mu-list-item-title>回到首页</mu-list-item-title>
         </mu-list-item>
-        <mu-list-item button @click="navigateTo('/course')">
+        <mu-list-item button @click="CourseButtonClick()">
           <mu-list-item-action>
             <mu-icon value="hotel"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>查看班课</mu-list-item-title>
         </mu-list-item>
-        <mu-list-item button @click="navigateTo('/mycourse')">
+        <mu-list-item button @click="MycourseButtonClick()">
           <mu-list-item-action>
             <mu-icon value="note"></mu-icon>
           </mu-list-item-action>
@@ -87,6 +87,8 @@ export default {
   name: "Index",
   data() {
     return {
+      mycourse:"",
+      course:"",
       username: localStorage.getItem("ms_userName"),
       open: false,
       docked: false,
@@ -177,6 +179,32 @@ export default {
       } else {
         this.$toast.message("请使用老师或者学生账号登录");
         this.roleFlag = false;
+      }
+    },
+    CourseButtonClick(){
+      let rolename=localStorage.getItem("ms_roleName");
+      if (rolename == "老师"){
+        this.course="/course"
+        console.log(this.course)
+        this.navigateTo(this.course)
+      }
+      if (rolename=="学生"){
+        this.course="/studentcourse"
+        console.log(this.course)
+        this.navigateTo(this.course)
+      }
+    },
+    MycourseButtonClick(){
+      let rolename=localStorage.getItem("ms_roleName");
+      if (rolename == "老师"){
+        this.mycourse="/mycourse"
+        console.log(this.mycourse)
+        this.navigateTo(this.mycourse)
+      }
+      if (rolename=="学生"){
+        this.mycourse="/studentmycourse"
+        console.log(this.mycourse)
+        this.navigateTo(this.mycourse)
       }
     }
   }

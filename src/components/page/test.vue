@@ -27,11 +27,11 @@
               >
                 <mu-list-item-action>
                   <!--<mu-avatar text-color="primary">-->
+
                   <mu-button style="min-width: 20px" color="primary">
                     <!--<mu-icon value="payment" color="primary"></mu-icon>-->
                     {{ index + 1 }}
                   </mu-button>
-
                   <!--</mu-avatar>-->
                 </mu-list-item-action>
                 <mu-list-item-content>
