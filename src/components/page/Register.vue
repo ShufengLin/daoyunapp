@@ -28,6 +28,9 @@
           <mu-form-item label="学院" help-text prop="academy" :rules="rules.notNull">
             <mu-text-field v-model="validateForm.academy"></mu-text-field>
           </mu-form-item>
+          <mu-form-item label="专业" help-text prop="major" :rules="rules.notNull">
+            <mu-text-field v-model="validateForm.major"></mu-text-field>
+          </mu-form-item>
           <mu-form-item prop="roleName" label="角色" :rules="rules.notNull">
             <mu-radio v-model="validateForm.roleName" value="学生" label="学生"></mu-radio>
             <mu-radio v-model="validateForm.roleName" value="老师" label="老师"></mu-radio>
@@ -46,6 +49,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: "Register",
   data() {
@@ -59,7 +64,8 @@ export default {
         phoneNumber: "",
         email: "",
         school: "",
-        academy: ""
+        academy: "",
+        major:""
       },
       rules: {
         notNull: [
@@ -95,7 +101,7 @@ export default {
           this.$toast.warning("请输入必填项！");
           return;
         } else {
-          this.login();
+          this.register();
         }
       });
     },
@@ -110,10 +116,35 @@ export default {
         phoneNumber: "",
         email: "",
         school: "",
-        academy: ""
+        academy: "",
+        major:""
       };
     },
-    login() {}
+    register() {
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/Login/register",
+          this.validateForm,
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              console.log(res);
+              if (res.data.code == 0) {
+                this.$toast.success(res.data.msg);
+                this.$router.push("/login");
+              } else {
+                this.$toast.error(res.data.msg);
+              }
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    }
   }
 };
 </script>
