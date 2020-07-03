@@ -6,7 +6,7 @@
                 <mu-button icon color="primary" @click="handleSearch">
                     <mu-icon value="search"></mu-icon>
                 </mu-button>
-                <mu-button fab small color="primary" @click="addCourse()">
+                <mu-button fab small color="primary" @click="addCourse()" v-if="showAddCourse">
                     <mu-icon value="add"></mu-icon>
                 </mu-button>
             </mu-row>
@@ -82,13 +82,15 @@
                 },
                 refreshing: false,
                 loading: false,
-                courseList: []
+                courseList: [],
+                showAddCourse:false
             };
         },
         created: function() {
             this.fetchData();
             this.getData();
             this.getDataCount();
+            this.roleController();
         },
         methods: {
             navigateTo(val) {
@@ -214,6 +216,11 @@
             },
             addCourse(){
                 this.$router.push("/addCourse");
+            },
+            roleController(){
+                if(localStorage.getItem("ms_roleName")=="老师"){
+                    this.showAddCourse=true;
+                }
             }
         }
     };

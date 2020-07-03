@@ -22,15 +22,15 @@
       <mu-card-text>{{"联系方式:"+info.phoneNumber}}</mu-card-text>
       <mu-divider></mu-divider>
       <mu-flex justify-content="center" align-items="center">
-        <mu-button flat color="primary">
+        <mu-button flat color="primary" v-if="showAttendCourse" @click="attendCourse">
           <mu-icon left value="navigate_next"></mu-icon>参加班课
         </mu-button>
-        <mu-button flat color="primary">
+        <mu-button flat color="primary" v-if="showCourseMember" @click="toMember">
           <mu-icon left value="details"></mu-icon>班课成员
         </mu-button>
       </mu-flex>
       <mu-flex justify-content="center" align-items="center">
-        <mu-button flat color="primary" @click="toSign">
+        <mu-button flat color="primary" @click="toSign" v-if="showSign">
           <mu-icon left value="person_pin"></mu-icon>签到
         </mu-button>
       </mu-flex>
@@ -45,7 +45,7 @@ export default {
   name: "courseInfo",
   data() {
     return {
-      courseId: this.$route.params.Id,
+      courseId: parseInt(localStorage.getItem("courseId")),
       info: {
         courseName: "",
         courseHour: 0,
@@ -56,12 +56,23 @@ export default {
         school: "",
         academy: "",
         major: "",
-        phoneNumber: ""
-      }
+        phoneNumber: "",
+        teachId: 0
+      },
+      showAttendCourse: false,
+      showCourseMember: false,
+      showSign: false,
+      studentCourse: {},
+      isSign:0
     };
   },
   created: function() {
     this.getData();
+    this.checkStudentCourse();
+    setTimeout(() => {
+      this.roleController();
+      this.getIsSign();
+    }, 500);
   },
   filters: {
     formatDate1(time) {
@@ -103,13 +114,145 @@ export default {
         );
     },
     toSign() {
-      this.$router.push({
+      if (localStorage.getItem("ms_roleName") == "老师"){//如果是老师，可以进入签到页面进行发起签到或者关闭签到
+        this.pushSign();
+      }
+      else{//如果是学生
+        if(this.isSign == 1){//课程状态为开启签到时，可以进入签到页面进行签到
+          this.pushSign();
+        }else{//课程状态为关闭签到时，不能进入签到页面签到
+          this.$toast.message("还没有开始签到");
+        }
+      }
+    },
+    pushSign(){
+              this.$router.push({
         name: "signCourse",
         path: "/signCourse",
         params: {
           courseId: this.courseId
         }
       });
+    },
+    roleController() {
+      if (localStorage.getItem("ms_roleName") == "老师") {
+        if (parseInt(localStorage.getItem("ms_userId")) == this.info.teachId) {
+          //如果是登录用户为老师，验证是不是该老师的课程
+          //如果是,显示班课成员，签到按钮
+          this.showAttendCourse = false;
+          this.showCourseMember = true;
+          this.showSign = true;
+        } else {
+          //如果不是该老师的课程，则禁用所有按钮，只能查看课程信息
+          this.showAttendCourse = false;
+          this.showCourseMember = false;
+          this.showSign = false;
+        }
+      } else {
+        //如果登录用户为学生,验证这个课程是不是学生正在参与的课程
+        if (this.studentCourse != null) {
+          //如果是，显示班课成员，签到按钮
+          this.showAttendCourse = false;
+          this.showCourseMember = true;
+          this.showSign = true;
+        } else {
+          //如果不是，显示参加课程按钮
+          this.showAttendCourse = true;
+          this.showCourseMember = false;
+          this.showSign = false;
+        }
+      }
+    },
+    checkStudentCourse() {
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/courseStudent/getStudentCourseByTwoId",
+          {
+            userId: parseInt(localStorage.getItem("ms_userId")),
+            courseId: this.courseId
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              if (res.data.code == 0) {
+                this.studentCourse = res.data.data;
+              } else if (res.data.code == -2) {
+                this.$router.push("/login");
+                this.$toast.error(res.data.msg);
+              } else {
+                this.$toast.error(res.data.msg);
+              }
+              //this.roleController();
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+    toMember() {
+      this.$router.push({
+        name: "coursedetail",
+        path: "/coursedetail",
+        params: {
+          Id: this.courseId
+        }
+      });
+    },
+    attendCourse() {
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/courseStudent/attendCourse",
+          {
+            studentId: parseInt(localStorage.getItem("ms_userId")),
+            courseId: this.courseId
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              if (res.data.code == 0) {
+                this.$toast.success(res.data.msg);
+                this.showAttendCourse = false;
+                this.showCourseMember = true;
+                this.showSign = true;
+              } else if (res.data.code == -2) {
+                this.$router.push("/login");
+                this.$toast.error(res.data.msg);
+              } else {
+                this.$toast.error(res.data.msg);
+              }
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+    getIsSign() {
+      //TODO 待加入搜索限定参数
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/course/getIsSign",
+          { courseId: this.courseId },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              this.isSign = res.data.data;
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
     }
   }
 };
