@@ -38,6 +38,7 @@ export default {
   name: "resetPassword",
   data() {
     return {
+        userName:localStorage.getItem("ms_userName"),
       validateForm: {
         oldPassword: "",
         password: "",
@@ -77,7 +78,7 @@ export default {
           this.$toast.warning("请输入必填项！");
           return;
         } else {
-          this.register();
+          this.changePassword();
         }
       });
     },
@@ -93,7 +94,7 @@ export default {
       axios
         .post(
           "http://localhost:8080/daoyunWeb/Login/changePassword",
-          this.validateForm,
+          {userName: this.userName,password: this.validateForm.oldPassword,newPassword: this.validateForm.password},
           { headers: { "Content-Type": "application/json" } }
         )
         .then(
@@ -103,7 +104,10 @@ export default {
               console.log(res);
               if (res.data.code == 0) {
                 this.$toast.success(res.data.msg);
+                this.alert();
+              } else if (res.data.code == -2) {
                 this.$router.push("/login");
+                this.$toast.error(res.data.msg);
               } else {
                 this.$toast.error(res.data.msg);
               }
@@ -113,6 +117,13 @@ export default {
             console.log(error);
           }
         );
+    },
+    alert () {
+      this.$alert('您已经成功修改密码，即将返回登录页重新登录', '提示', {
+        okLabel: '知道了'
+      }).then(() => {
+          this.$router.push("/login");
+      });
     }
   }
 };
