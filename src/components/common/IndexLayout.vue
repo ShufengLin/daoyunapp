@@ -18,7 +18,7 @@
           </mu-chip>
         </mu-button>
         <mu-list slot="content">
-          <mu-list-item button @click="navigateTo('/login')">
+          <mu-list-item button @click="navigateTo('/personalInfo')">
             <mu-list-item-content>
               <mu-list-item-title>查看个人信息</mu-list-item-title>
             </mu-list-item-content>
@@ -61,18 +61,18 @@
           </mu-list-item-action>
           <mu-list-item-title>查看我的班课</mu-list-item-title>
         </mu-list-item>
-        <mu-sub-header>测试部分</mu-sub-header>
-        <mu-list-item button @click="navigateTo('/test')">
+        <mu-sub-header>我的</mu-sub-header>
+        <mu-list-item button @click="navigateTo('/personalInfo')">
           <mu-list-item-action>
             <mu-icon value="note"></mu-icon>
           </mu-list-item-action>
-          <mu-list-item-title>测试页面</mu-list-item-title>
+          <mu-list-item-title>查看个人信息</mu-list-item-title>
         </mu-list-item>
-        <mu-list-item button @click="navigateTo('/signCourse')">
+        <mu-list-item button @click="logout()">
           <mu-list-item-action>
             <mu-icon value="note"></mu-icon>
           </mu-list-item-action>
-          <mu-list-item-title>班课签到</mu-list-item-title>
+          <mu-list-item-title>注销</mu-list-item-title>
         </mu-list-item>
       </mu-list>
     </mu-drawer>

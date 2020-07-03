@@ -132,7 +132,16 @@ const routes = [{
         meta: {
           title: '课程信息'
         }
+      },{
+        path: '/personalInfo',
+        name: 'personalInfo',
+        component: () =>
+        import(/* webpackChunkName: "personalInfo"*/ '../components/page/PersonalInfo'),
+        meta: {
+          title: '个人信息'
+        }
       }
+
   ]
 }
 ]
