@@ -170,6 +170,9 @@ export default {
               if (res.data.code == 0) {
                 localStorage.setItem("ms_roleId", res.data.data.roleId);
                 localStorage.setItem("ms_roleName", res.data.data.roleName);
+              } else if (res.data.code == -2) {
+                this.$router.push("/login");
+                this.$toast.error(res.data.msg);
               } else {
                 this.$toast.error(res.data.msg);
               }

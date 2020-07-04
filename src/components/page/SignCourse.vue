@@ -5,6 +5,26 @@
       <mu-divider></mu-divider>
       <mu-card-text>{{remindInfo}}</mu-card-text>
       <mu-row justify-content="center">
+        <!-- <p v-if="colorStatus == 1">
+          <mu-avatar color="blue200" :size="200" @click="openMap">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
+        <p v-else-if="colorStatus == 2">
+          <mu-avatar color="red400" :size="200" @click="stopSign">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
+        <p v-else-if="colorStatus == 3">
+          <mu-avatar color="blueGrey400" :size="200">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
+        <p v-else-if="colorStatus == 4">
+          <mu-avatar color="blue200" :size="200" @click="openMap">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>-->
         <p v-if="colorStatus == 1">
           <mu-avatar color="blue200" :size="200" @click="openMap">
             <mu-icon value="add_location"></mu-icon>
@@ -26,8 +46,8 @@
           </mu-avatar>
         </p>
       </mu-row>
-      <mu-card-title sub-title="签到信息"></mu-card-title>
-      <mu-card-text>{{signInfo}}</mu-card-text>
+      <!-- <mu-card-title sub-title="签到信息"></mu-card-title>
+      <mu-card-text>{{signInfo}}</mu-card-text>-->
       <mu-divider></mu-divider>
       <mu-card-text>{{signDetailInfo}}</mu-card-text>
     </mu-card>
@@ -81,7 +101,7 @@ export default {
       zoom: 12,
       clientHeight: document.documentElement.clientHeight - 350, // 屏幕高度
       isSign: 0,
-      userId: parseInt(localStorage.getItem("ms_userId")),
+      userId: parseInt(localStorage.getItem("ms_userId"))
     };
   },
   created: function() {
@@ -109,17 +129,21 @@ export default {
       window.map = map;
     },
     sign() {
+      
       if (this.locData.address == "") {
         this.$toast.warning("请先点击小圆点进行定位");
       } else {
-        //const loading = this.$loading();
+        const loading = this.$loading();
         switch (this.colorStatus) {
           case 1: //教师发起签到情况
+          
             this.beginSign();
             this.timer = setTimeout(() => {
-              window.location.reload();
+              //window.location.reload();
+              this.roleController();
               this.signDetailInfo = this.locData.address;
               this.mapVisible = false;
+              loading.close();
             }, 500);
             break;
           case 2: //教师关闭签到情况
@@ -136,9 +160,11 @@ export default {
           case 4: //学生 开始签到
             this.studentSign();
             this.timer = setTimeout(() => {
-              window.location.reload();
+              //window.location.reload();
+              this.roleController();
               this.signDetailInfo = this.locData.address;
               this.mapVisible = false;
+              loading.close();
             }, 500);
             break;
           default:
@@ -146,6 +172,7 @@ export default {
             this.mapVisible = false;
             break;
         }
+        
         //loading.close();
         // const loading = this.$loading();
         // this.timer = setTimeout(() => {
@@ -280,6 +307,7 @@ export default {
             if (res.status == 200) {
               this.coursedate = res.data.data;
               this.$toast.success(res.data.msg);
+              this.isSign = 1;
             }
           },
           error => {
@@ -300,6 +328,7 @@ export default {
             console.log(res);
             if (res.status == 200) {
               this.$toast.success(res.data.msg);
+              this.isSign = 0;
             }
           },
           error => {
@@ -325,12 +354,12 @@ export default {
             console.log(res);
             if (res.status == 200) {
               this.signStatus = res.data.data;
-              if(res.data.data == 0){
-                this.$toast.message("不在签到范围内，请重新签到")
-              }else if(res.data.data == 1){
-                this.$toast.success("签到成功")
-              }else if(res.data.data == 2){
-                this.$toast.message("您已经签到成功过了，请勿重复签到")
+              if (res.data.data == 0) {
+                this.$toast.message("不在签到范围内，请重新签到");
+              } else if (res.data.data == 1) {
+                this.$toast.success("签到成功");
+              } else if (res.data.data == 2) {
+                this.$toast.message("您已经签到成功过了，请勿重复签到");
               }
             }
           },
@@ -340,12 +369,16 @@ export default {
         );
     },
     stopSign() {
+      const loading = this.$loading();
       this.closeSign();
       this.timer = setTimeout(() => {
-        window.location.reload();
+        //window.location.reload();
+        this.roleController();
         this.signDetailInfo = this.locData.address;
         this.mapVisible = false;
+        loading.close();
       }, 500);
+      
     }
   }
 };
