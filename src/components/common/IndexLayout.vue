@@ -56,32 +56,32 @@
         </mu-list-item>
         <mu-list-item button @click="CourseButtonClick()">
           <mu-list-item-action>
-            <mu-icon value="hotel"></mu-icon>
+            <mu-icon value="subject"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>查看班课</mu-list-item-title>
         </mu-list-item>
         <mu-sub-header>我的</mu-sub-header>
         <mu-list-item button @click="MycourseButtonClick()">
           <mu-list-item-action>
-            <mu-icon value="note"></mu-icon>
+            <mu-icon value="sort"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>查看我的班课</mu-list-item-title>
         </mu-list-item>
         <mu-list-item button @click="navigateTo('/personalInfo')">
           <mu-list-item-action>
-            <mu-icon value="note"></mu-icon>
+            <mu-icon value="person"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>查看个人信息</mu-list-item-title>
         </mu-list-item>
           <mu-list-item button @click="navigateTo('/resetPassword')">
           <mu-list-item-action>
-            <mu-icon value="note"></mu-icon>
+            <mu-icon value="create"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>修改密码</mu-list-item-title>
           </mu-list-item>
         <mu-list-item button @click="logout()">
           <mu-list-item-action>
-            <mu-icon value="note"></mu-icon>
+            <mu-icon value="arrow_back"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>注销</mu-list-item-title>
         </mu-list-item>
