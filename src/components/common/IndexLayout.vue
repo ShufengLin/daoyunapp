@@ -18,14 +18,19 @@
           </mu-chip>
         </mu-button>
         <mu-list slot="content">
-          <mu-list-item button @click="navigateTo('/login')">
+          <mu-list-item button @click="navigateTo('/personalInfo')">
             <mu-list-item-content>
               <mu-list-item-title>查看个人信息</mu-list-item-title>
             </mu-list-item-content>
           </mu-list-item>
-          <mu-list-item button @click="navigateTo('/mycourse')">
+          <mu-list-item button @click="MycourseButtonClick()">
             <mu-list-item-content>
               <mu-list-item-title>查看我的班课</mu-list-item-title>
+            </mu-list-item-content>
+          </mu-list-item>
+          <mu-list-item button @click="navigateTo('/resetPassword')">
+            <mu-list-item-content>
+              <mu-list-item-title>修改密码</mu-list-item-title>
             </mu-list-item-content>
           </mu-list-item>
           <mu-list-item button @click="logout()">
@@ -49,30 +54,36 @@
           </mu-list-item-action>
           <mu-list-item-title>回到首页</mu-list-item-title>
         </mu-list-item>
-        <mu-list-item button @click="navigateTo('/course')">
+        <mu-list-item button @click="CourseButtonClick()">
           <mu-list-item-action>
-            <mu-icon value="hotel"></mu-icon>
+            <mu-icon value="subject"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>查看班课</mu-list-item-title>
         </mu-list-item>
-        <mu-list-item button @click="navigateTo('/mycourse')">
+        <mu-sub-header>我的</mu-sub-header>
+        <mu-list-item button @click="MycourseButtonClick()">
           <mu-list-item-action>
-            <mu-icon value="note"></mu-icon>
+            <mu-icon value="sort"></mu-icon>
           </mu-list-item-action>
           <mu-list-item-title>查看我的班课</mu-list-item-title>
         </mu-list-item>
-        <mu-sub-header>测试部分</mu-sub-header>
-        <mu-list-item button @click="navigateTo('/test')">
+        <mu-list-item button @click="navigateTo('/personalInfo')">
           <mu-list-item-action>
-            <mu-icon value="note"></mu-icon>
+            <mu-icon value="person"></mu-icon>
           </mu-list-item-action>
-          <mu-list-item-title>测试页面</mu-list-item-title>
+          <mu-list-item-title>查看个人信息</mu-list-item-title>
         </mu-list-item>
-        <mu-list-item button @click="navigateTo('/signCourse')">
+          <mu-list-item button @click="navigateTo('/resetPassword')">
           <mu-list-item-action>
-            <mu-icon value="note"></mu-icon>
+            <mu-icon value="create"></mu-icon>
           </mu-list-item-action>
-          <mu-list-item-title>班课签到</mu-list-item-title>
+          <mu-list-item-title>修改密码</mu-list-item-title>
+          </mu-list-item>
+        <mu-list-item button @click="logout()">
+          <mu-list-item-action>
+            <mu-icon value="arrow_back"></mu-icon>
+          </mu-list-item-action>
+          <mu-list-item-title>注销</mu-list-item-title>
         </mu-list-item>
       </mu-list>
     </mu-drawer>
@@ -81,18 +92,23 @@
 
 <script>
 import Cookies from "js-cookie";
+import axios from "axios";
 
 export default {
   name: "Index",
   data() {
     return {
+      mycourse: "",
+      course: "",
       username: localStorage.getItem("ms_userName"),
       open: false,
       docked: false,
       right: false,
       hotelInfo: {
         address: null
-      }
+      },
+      roleName: "",
+      roleFlag: false
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -103,8 +119,19 @@ export default {
     });
   },
   created: function() {
-    this.isLogin();
-    this.fetchData();
+    let loginFlag = this.isLogin();
+    if (loginFlag) {
+      const loading = this.$loading();
+      this.getUserRole();
+      this.timer = setTimeout(() => {
+        this.checkRole();
+        let roleFlag = this.roleFlag;
+        if (!roleFlag) {
+          this.logout();
+        }
+        loading.close();
+      }, 500);
+    }
   },
   methods: {
     isLogin() {
@@ -115,6 +142,7 @@ export default {
         return true;
       }
     },
+
     navigateTo(val) {
       this.$router.push(val);
     },
@@ -122,9 +150,75 @@ export default {
       localStorage.removeItem("ms_userName");
       localStorage.removeItem("token");
       localStorage.removeItem("ms_userId");
+      localStorage.removeItem("ms_roleId");
+      localStorage.removeItem("ms_roleName");
       this.navigateTo("/login");
     },
-    fetchData() {}
+    fetchData() {},
+    getUserRole() {
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/userRole/getUserRoleByUserId",
+          { userId: parseInt(localStorage.getItem("ms_userId")) },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              console.log(res);
+              if (res.data.code == 0) {
+                localStorage.setItem("ms_roleId", res.data.data.roleId);
+                localStorage.setItem("ms_roleName", res.data.data.roleName);
+              } else if (res.data.code == -2) {
+                this.$router.push("/login");
+                this.$toast.error(res.data.msg);
+              } else {
+                this.$toast.error(res.data.msg);
+              }
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+    checkRole() {
+      this.roleName = localStorage.getItem("ms_roleName");
+      if (this.roleName == "老师" || this.roleName == "学生") {
+        //this.$toast.success("登录成功");
+        this.roleFlag = true;
+      } else {
+        this.$toast.message("请使用老师或者学生账号登录");
+        this.roleFlag = false;
+      }
+    },
+    CourseButtonClick() {
+      let rolename = localStorage.getItem("ms_roleName");
+      if (rolename == "老师") {
+        this.course = "/course";
+        console.log(this.course);
+        this.navigateTo(this.course);
+      }
+      if (rolename == "学生") {
+        this.course = "/studentcourse";
+        console.log(this.course);
+        this.navigateTo(this.course);
+      }
+    },
+    MycourseButtonClick() {
+      let rolename = localStorage.getItem("ms_roleName");
+      if (rolename == "老师") {
+        this.mycourse = "/mycourse";
+        console.log(this.mycourse);
+        this.navigateTo(this.mycourse);
+      }
+      if (rolename == "学生") {
+        this.mycourse = "/studentmycourse";
+        console.log(this.mycourse);
+        this.navigateTo(this.mycourse);
+      }
+    }
   }
 };
 </script>

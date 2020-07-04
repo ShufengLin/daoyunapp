@@ -10,16 +10,13 @@
             >
                 <mu-card-title title="新增班课" sub-title="输入你的班课信息"></mu-card-title>
                 <mu-card-text>
-                    <mu-form-item label="courseName" help-text prop="courseName" :rules="rules.notNull">
+                    <mu-form-item label="班课名称" help-text prop="courseName" :rules="rules.notNull">
                         <mu-text-field v-model="validateForm.courseName"></mu-text-field>
                     </mu-form-item>
-                    <mu-form-item label="courseHour" help-text prop="courseHour" :rules="rules.notNull">
+                    <mu-form-item label="课时" help-text prop="courseHour" :rules="rules.notNull">
                         <mu-text-field type="number" v-model.number="validateForm.courseHour"></mu-text-field>
                     </mu-form-item>
-                    <mu-form-item label="userName" help-text prop="userName" :rules="rules.notNull">
-                        <mu-text-field v-model="validateForm.userName"></mu-text-field>
-                    </mu-form-item>
-                    <mu-form-item label="coursePlace" help-text prop="coursePlace" :rules="rules.notNull">
+                    <mu-form-item label="授课地点" help-text prop="coursePlace" :rules="rules.notNull">
                         <mu-text-field v-model="validateForm.coursePlace"></mu-text-field>
                     </mu-form-item>
                     <mu-date-input  icon="today" v-model="validateForm.startTime" label="设置开课时间" container="dialog" type="dateTime" label-float full-width landscape></mu-date-input>
@@ -38,13 +35,12 @@
 <script>
     import axios from 'axios';
     export default {
-        name: "AddCourse",
         data() {
             return {
                 validateForm: {
                     courseName: "",
                     courseHour: 0,
-                    userName:"",
+                    userName:localStorage.getItem("ms_userName"),
                     coursePlace: "",
                     startTime:undefined
                 },
@@ -52,9 +48,16 @@
                     notNull: [
                         { validate: val => !!val, message: "请输入信息", trigger: "blur" }
                     ]
-                }
+                },
+                fromPath:""
             };
         },
+ beforeRouteEnter(to, from, next) {
+   next(vm=>{          //  这里的vm指的就是vue实例，可以用来当做this使用
+   console.log(from);
+   vm.fromPath = from.path;
+    })
+  },
         methods: {
             navigateTo(val) {
                 this.$router.push(val);
@@ -91,7 +94,7 @@
                             console.log(res);
                             if (res.status == 200) {
                                 if (res.data.code == 0) {
-                                    this.$router.push("/course");
+                                    this.$router.push(this.fromPath);
                                 } else if (res.data.code == -2) {
                                     this.$router.push("/login");
                                     this.$toast.error(res.data.msg);

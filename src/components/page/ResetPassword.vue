@@ -8,38 +8,21 @@
         label-width="100"
         class="mu-demo-form"
       >
-        <mu-card-title title="到云" sub-title="用户注册"></mu-card-title>
+        <mu-card-title title="到云" sub-title="修改密码"></mu-card-title>
         <mu-card-text>
-          <mu-form-item label="用户名" help-text prop="userName" :rules="rules.notNull">
-            <mu-text-field v-model="validateForm.userName"></mu-text-field>
+          <mu-form-item label="旧密码" prop="oldPassword" :rules="rules.notNull">
+            <mu-text-field type="password" v-model="validateForm.oldPassword" prop="oldPassword"></mu-text-field>
           </mu-form-item>
-          <mu-form-item label="密码" prop="password" :rules="rules.password">
+          <mu-form-item label="新密码" prop="password" :rules="rules.password">
             <mu-text-field type="password" v-model="validateForm.password" prop="password"></mu-text-field>
           </mu-form-item>
-          <mu-form-item label="确认密码" prop="password2" :rules="rules.password2">
+          <mu-form-item label="再次确认" prop="password2" :rules="rules.password2">
             <mu-text-field type="password" v-model="validateForm.password2" prop="password2"></mu-text-field>
           </mu-form-item>
-          <mu-form-item label="手机号" help-text prop="phoneNumber" :rules="rules.notNull">
-            <mu-text-field v-model="validateForm.phoneNumber"></mu-text-field>
-          </mu-form-item>
-          <mu-form-item label="学校" help-text prop="school" :rules="rules.notNull">
-            <mu-text-field v-model="validateForm.school"></mu-text-field>
-          </mu-form-item>
-          <mu-form-item label="学院" help-text prop="academy" :rules="rules.notNull">
-            <mu-text-field v-model="validateForm.academy"></mu-text-field>
-          </mu-form-item>
-          <mu-form-item label="专业" help-text prop="major" :rules="rules.notNull">
-            <mu-text-field v-model="validateForm.major"></mu-text-field>
-          </mu-form-item>
-          <mu-form-item prop="roleName" label="角色" :rules="rules.notNull">
-            <mu-radio v-model="validateForm.roleName" value="学生" label="学生"></mu-radio>
-            <mu-radio v-model="validateForm.roleName" value="老师" label="老师"></mu-radio>
-          </mu-form-item>
-          <mu-button flat @click="navigateTo('/login')">已有账号？立即登录</mu-button>
         </mu-card-text>
         <mu-card-actions>
           <mu-form-item>
-            <mu-button color="secondary" @click="submit">注册</mu-button>
+            <mu-button color="secondary" @click="submit">确认修改</mu-button>
             <mu-button @click="clear">重置</mu-button>
           </mu-form-item>
         </mu-card-actions>
@@ -49,23 +32,17 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 
 export default {
-  name: "Register",
+  name: "resetPassword",
   data() {
     return {
+        userName:localStorage.getItem("ms_userName"),
       validateForm: {
-        userName: "",
+        oldPassword: "",
         password: "",
-        password2: "",
-        name: "",
-        roleName: "学生",
-        phoneNumber: "",
-        email: "",
-        school: "",
-        academy: "",
-        major:""
+        password2: ""
       },
       rules: {
         notNull: [
@@ -101,30 +78,23 @@ export default {
           this.$toast.warning("请输入必填项！");
           return;
         } else {
-          this.register();
+          this.changePassword();
         }
       });
     },
     clear() {
       this.$refs.form.clear();
       this.validateForm = {
-        userName: "",
+        oldPassword: "",
         password: "",
-        password2: "",
-        name: "",
-        roleName: "学生",
-        phoneNumber: "",
-        email: "",
-        school: "",
-        academy: "",
-        major:""
+        password2: ""
       };
     },
-    register() {
+    changePassword() {
       axios
         .post(
-          "http://localhost:8080/daoyunWeb/Login/register",
-          this.validateForm,
+          "http://localhost:8080/daoyunWeb/Login/changePassword",
+          {userName: this.userName,password: this.validateForm.oldPassword,newPassword: this.validateForm.password},
           { headers: { "Content-Type": "application/json" } }
         )
         .then(
@@ -134,7 +104,10 @@ export default {
               console.log(res);
               if (res.data.code == 0) {
                 this.$toast.success(res.data.msg);
+                this.alert();
+              } else if (res.data.code == -2) {
                 this.$router.push("/login");
+                this.$toast.error(res.data.msg);
               } else {
                 this.$toast.error(res.data.msg);
               }
@@ -144,6 +117,13 @@ export default {
             console.log(error);
           }
         );
+    },
+    alert () {
+      this.$alert('您已经成功修改密码，即将返回登录页重新登录', '提示', {
+        okLabel: '知道了'
+      }).then(() => {
+          this.$router.push("/login");
+      });
     }
   }
 };

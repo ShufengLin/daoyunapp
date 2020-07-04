@@ -24,6 +24,14 @@ const routes = [{
     title:'注册'
   }
 },
+{
+  path: '/resetPassword',
+  component:()=>
+  import (/* webpackChunkName: "resetPassword" */'../components/page/ResetPassword.vue'),
+  meta:{
+    title:'修改密码'
+  }
+},
     {
         path: '/sign',
         component:()=>
@@ -65,7 +73,17 @@ const routes = [{
       component: () =>
           import ( /* webpackChunkName: "test" */ '../components/page/Course.vue'),
       meta: {
-          title: '班课页面'
+          title: '班课页面',
+          name:'course'
+      }
+  },
+  {
+      path: '/studentcourse',
+      component: () =>
+          import ( /* webpackChunkName: "test" */ '../components/page/StudentCourse.vue'),
+      meta: {
+          title: '班课页面',
+          name:'studentcourse'
       }
   },
     {
@@ -73,9 +91,19 @@ const routes = [{
       component: () =>
           import ( /* webpackChunkName: "test" */ '../components/page/Mycourse.vue'),
       meta: {
-          title: '我的班课'
+          title: '我的班课',
+          name:'mycourse'
       }
     },
+  {
+      path: '/studentmycourse',
+      component: () =>
+          import ( /* webpackChunkName: "test" */ '../components/page/StudentMycourse.vue'),
+      meta: {
+          title: '我的班课',
+          name:'studentmycourse'
+      }
+  },
   {
       path: '/coursedetail',
       name:'coursedetail',
@@ -102,6 +130,7 @@ const routes = [{
           }
       },{
         path: '/signCourse',
+        name: 'signCourse',
         component: () =>
         import (/* webpackChunkName: "signCourse"*/ '../components/page/SignCourse'),
         meta: {
@@ -114,6 +143,41 @@ const routes = [{
         import(/* webpackChunkName: "courseInfo"*/ '../components/page/CourseInfo'),
         meta: {
           title: '课程信息'
+        }
+      },{
+        path: '/personalInfo',
+        name: 'personalInfo',
+        component: () =>
+        import(/* webpackChunkName: "personalInfo"*/ '../components/page/PersonalInfo'),
+        meta: {
+          title: '个人信息'
+        }
+      },
+      {
+        path: '/teacherSignInfo',
+        name: 'teacherSignInfo',
+        component: () =>
+        import(/* webpackChunkName: "teacherSignInfo"*/ '../components/page/TeacherSignInfo'),
+        meta: {
+          title: '签到情况'
+        }
+      },
+      {
+        path: '/teacherSignDetail',
+        name: 'teacherSignDetail',
+        component: () =>
+        import(/* webpackChunkName: "teacherSignDetail"*/ '../components/page/TeacherSignDetail'),
+        meta: {
+          title: '签到详情'
+        }
+      },
+      {
+        path: '/studentSignInfo',
+        name: 'studentSignInfo',
+        component: () =>
+        import(/* webpackChunkName: "studentSignInfo"*/ '../components/page/StudentSignInfo'),
+        meta: {
+          title: '签到情况'
         }
       }
   ]

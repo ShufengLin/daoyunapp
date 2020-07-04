@@ -1,54 +1,33 @@
 <template>
   <div id="order">
     <mu-container class="paperContainer">
-      <mu-row>
-        <mu-text-field v-model="query.paperName" placeholder="搜索paper"></mu-text-field>
-        <mu-button icon color="primary" @click="handleSearch">
-          <mu-icon value="search"></mu-icon>
-        </mu-button>
-        <mu-button fab small color="primary" @click="addPaper()">
-          <mu-icon value="add"></mu-icon>
-        </mu-button>
-      </mu-row>
       <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
-        <mu-list textline="three-line" class="paperList">
-          <mu-sub-header>Paper</mu-sub-header>
+        <mu-list textline="three-line" class="courseSignList">
+          <mu-sub-header>学生签到情况 打勾表示签到成功</mu-sub-header>
           <mu-row gutter>
             <mu-col xl="12" lg="12" md="12" sm="12" span="12">
-              <!--:style="'background-color:'+ getStaColor(order.orderStatus)"-->
               <mu-list-item
                 avatar
                 button
                 :ripple="true"
                 class="paperItem"
-                v-for="(paper,index) in paperList"
-                @click="toDetail(paper.paperId)"
-                :key="paper.paperId"
+                v-for="(sign,index) in courseSignList"
+                :key="index"
               >
                 <mu-list-item-action>
-                  <!--<mu-avatar text-color="primary">-->
-
-                  <mu-button style="min-width: 20px" color="primary">
-                    <!--<mu-icon value="payment" color="primary"></mu-icon>-->
-                    {{ index + 1 }}
-                  </mu-button>
-                  <!--</mu-avatar>-->
+                  <mu-button style="min-width: 20px" color="primary">{{ index + 1 }}</mu-button>
                 </mu-list-item-action>
+
                 <mu-list-item-content>
-                  <mu-list-item-title style="color: black;font-size: 1.2em;font-weight: bolder">
-                    {{ paper.paperName }}
-                    <!--<mu-badge :content="order.orderType" color="primary"></mu-badge>-->
-                  </mu-list-item-title>
-                  <mu-list-item-sub-title>{{paper.paperNum}}</mu-list-item-sub-title>
-                  <mu-list-item-sub-title>{{paper.paperDetail}}</mu-list-item-sub-title>
+                  <mu-list-item-title
+                    style="color: black;font-size: 0.7em;font-weight: bolder"
+                  >{{sign.userName}}</mu-list-item-title>
+                  <mu-list-item-sub-title>{{ sign.signTime | formatDate1}}</mu-list-item-sub-title>
                 </mu-list-item-content>
                 <mu-list-item-action>
-                  <!-- <mu-badge
-                  :content="order.orderStatus|getOrderStatus"
-                  :color="order.orderStatus|getStatusColor"
-                  ></mu-badge>-->
-                  <!--<mu-button small round color="green">查看详情</mu-button>-->
+                  <mu-icon value="check" size="32" color="blue400" v-show="sign.signStatus == 0"></mu-icon>
                 </mu-list-item-action>
+                <mu-list-item-action></mu-list-item-action>
               </mu-list-item>
             </mu-col>
           </mu-row>
@@ -66,6 +45,7 @@
 
 <script>
 import axios from "axios";
+import { formatDate } from "../../tools/date.js";
 export default {
   name: "test",
   data() {
@@ -78,15 +58,14 @@ export default {
       query: {
         page: 1,
         pageSize: 6,
-        paperName: ""
+        courseSignId: parseInt(localStorage.getItem("courseSignId"))
       },
       refreshing: false,
       loading: false,
-      paperList: []
+      courseSignList: []
     };
   },
   created: function() {
-    this.fetchData();
     this.getData();
     this.getDataCount();
   },
@@ -116,27 +95,22 @@ export default {
       return status;
     },
     toDetail(id) {
-      this.$router.push({
-        path: "/",
-        name: "",
-        params: {
-          orderId: id
-        }
-      });
+      //   this.$router.push({
+      //     path: "/",
+      //     name: "",
+      //     params: {
+      //       orderId: id
+      //     }
+      //   });
     },
-    fetchData() {},
     test() {
       this.$toast.message("test");
     },
     getData() {
       axios
         .post(
-          "http://localhost:8080/daoyunWeb/testExample/getPaperByPage",
-          {
-            page: this.query.page,
-            pageSize: this.query.pageSize,
-            paperName: this.query.paperName
-          },
+          "http://localhost:8080/daoyunWeb/course/getCourseSignByCourseSignId",
+          this.query,
           { headers: { "Content-Type": "application/json" } }
         )
         .then(
@@ -144,8 +118,8 @@ export default {
             console.log(res);
             if (res.status == 200) {
               if (res.data.code == 0) {
-                this.paperList = this.paperList.concat(res.data.data);
-                this.listSize = this.paperList.length;
+                this.courseSignList = this.courseSignList.concat(res.data.data);
+                this.listSize = this.courseSignList.length;
                 this.$toast.success(res.data.msg);
               } else if (res.data.code == -2) {
                 this.$router.push("/login");
@@ -164,8 +138,8 @@ export default {
       //TODO 待加入搜索限定参数
       axios
         .post(
-          "http://localhost:8080/daoyunWeb/testExample/getPaperCount",
-          { paperName: this.query.paperName },
+          "http://localhost:8080/daoyunWeb/course/getCourseSignCount",
+          this.query,
           { headers: { "Content-Type": "application/json" } }
         )
         .then(
@@ -185,7 +159,7 @@ export default {
       //this.$refs.container.scrollTop = 0;
       setTimeout(() => {
         this.refreshing = false;
-        this.paperList = [];
+        this.courseSignList = [];
         this.query.page = 1;
         this.getData();
         this.getDataCount();
@@ -208,9 +182,12 @@ export default {
       this.$set(this.query, "page", 1);
       this.getData();
       this.getDataCount();
-    },
-    addPaper(){
-      this.$router.push("/addPaper");
+    }
+  },
+  filters: {
+    formatDate1(time) {
+      var date = new Date(time);
+      return formatDate(date, "yyyy年MM月dd日 hh:mm:ss");
     }
   }
 };
@@ -220,7 +197,7 @@ export default {
 .paperContainer {
   padding: 10px;
 }
-.paperList {
+.courseSignList {
   padding: 16px 8px;
 }
 .paperItem {

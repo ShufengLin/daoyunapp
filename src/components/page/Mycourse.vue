@@ -6,7 +6,7 @@
                 <mu-button icon color="primary" @click="handleSearch">
                     <mu-icon value="search"></mu-icon>
                 </mu-button>
-                <mu-button fab small color="primary" @click="addCourse()">
+                <mu-button fab small color="primary" @click="addCourse()" v-if="showAddCourse">
                     <mu-icon value="add"></mu-icon>
                 </mu-button>
             </mu-row>
@@ -67,7 +67,6 @@
 <script>
     import axios from "axios";
     export default {
-        name: "test",
         data() {
             return {
                 open: false,
@@ -82,13 +81,21 @@
                 },
                 refreshing: false,
                 loading: false,
-                courseList: []
+                courseList: [],
+                showAddCourse:false
             };
         },
+ beforeRouteEnter(to, from, next) {
+   next(vm=>{          //  这里的vm指的就是vue实例，可以用来当做this使用
+   vm.refresh();
+   console.log(from);
+    })
+  },
         created: function() {
             this.fetchData();
             this.getData();
             this.getDataCount();
+            this.roleController();
         },
         methods: {
             navigateTo(val) {
@@ -116,8 +123,10 @@
                 return status;
             },
             toDetail(id) {
+                localStorage.setItem("courseId",id);
                 this.$router.push({
-                    name:'coursedetail',
+                    name:'courseInfo',
+                    path: "/courseInfo",
                     params: {
                         Id: id
                     }
@@ -189,6 +198,7 @@
                 //this.$refs.container.scrollTop = 0;
                 setTimeout(() => {
                     this.refreshing = false;
+                    this.courseList = [];
                     this.query.page = 1;
                     this.getData();
                     this.getDataCount();
@@ -214,6 +224,11 @@
             },
             addCourse(){
                 this.$router.push("/addCourse");
+            },
+            roleController(){
+                if(localStorage.getItem("ms_roleName")=="老师"){
+                    this.showAddCourse=true;
+                }
             }
         }
     };

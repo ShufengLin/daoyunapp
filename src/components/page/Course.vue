@@ -1,73 +1,72 @@
 <template>
-    <div id="order">
-        <mu-container class="paperContainer">
-            <mu-row>
-                <mu-text-field v-model="query.courseName" placeholder="搜索班课"></mu-text-field>
-                <mu-button icon color="primary" @click="handleSearch">
-                    <mu-icon value="search"></mu-icon>
-                </mu-button>
-                <mu-button fab small color="primary" @click="addCourse()">
-                    <mu-icon value="add"></mu-icon>
-                </mu-button>
-            </mu-row>
-            <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
-                <mu-list textline="three-line" class="paperList">
-                    <mu-sub-header>班课</mu-sub-header>
-                    <mu-row gutter>
-                        <mu-col xl="12" lg="12" md="12" sm="12" span="12">
-                            <!--:style="'background-color:'+ getStaColor(order.orderStatus)"-->
-                            <mu-list-item
-                                    avatar
-                                    button
-                                    :ripple="true"
-                                    class="courseItem"
-                                    v-for="(course,index) in courseList"
-                                    @click="toDetail(course.courseId)"
-                                    :key="course.courseId"
-                            >
-                                <mu-list-item-action>
-                                    <!--<mu-avatar text-color="primary">-->
-                                    <mu-button style="min-width: 20px" color="primary">
-                                        <!--<mu-icon value="payment" color="primary"></mu-icon>-->
-                                        {{ index + 1 }}
-                                    </mu-button>
+  <div id="order">
+    <mu-container class="paperContainer">
+      <mu-row>
+        <mu-text-field v-model="query.courseName" placeholder="搜索班课"></mu-text-field>
+        <mu-button icon color="primary" @click="handleSearch">
+          <mu-icon value="search"></mu-icon>
+        </mu-button>
+        <mu-button fab small color="primary" @click="addCourse()" v-if="showAddCourse">
+          <mu-icon value="add"></mu-icon>
+        </mu-button>
+      </mu-row>
+      <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
+        <mu-list textline="three-line" class="paperList">
+          <mu-sub-header>班课</mu-sub-header>
+          <mu-row gutter>
+            <mu-col xl="12" lg="12" md="12" sm="12" span="12">
+              <!--:style="'background-color:'+ getStaColor(order.orderStatus)"-->
+              <mu-list-item
+                avatar
+                button
+                :ripple="true"
+                class="courseItem"
+                v-for="(course,index) in courseList"
+                @click="toDetail(course.courseId)"
+                :key="course.courseId"
+              >
+                <mu-list-item-action>
+                  <!--<mu-avatar text-color="primary">-->
+                  <mu-button style="min-width: 20px" color="primary">
+                    <!--<mu-icon value="payment" color="primary"></mu-icon>-->
+                    {{ index + 1 }}
+                  </mu-button>
 
-                                    <!--</mu-avatar>-->
-                                </mu-list-item-action>
-                                <mu-list-item-content>
-                                    <mu-list-item-title style="color: black;font-size: 1.2em;font-weight: bolder">
-                                        {{ course.courseName }}
-                                        <!--<mu-badge :content="order.orderType" color="primary"></mu-badge>-->
-                                    </mu-list-item-title>
-                                    <mu-list-item-sub-title>{{course.courseHour}}</mu-list-item-sub-title>
-                                    <mu-list-item-sub-title>{{course.coursePlace}}</mu-list-item-sub-title>
-                                </mu-list-item-content>
-                                <mu-list-item-action>
-                                    <!-- <mu-badge
+                  <!--</mu-avatar>-->
+                </mu-list-item-action>
+                <mu-list-item-content>
+                  <mu-list-item-title style="color: black;font-size: 1.2em;font-weight: bolder">
+                    {{ course.courseName }}
+                    <!--<mu-badge :content="order.orderType" color="primary"></mu-badge>-->
+                  </mu-list-item-title>
+                  <mu-list-item-sub-title>{{course.courseHour}}</mu-list-item-sub-title>
+                  <mu-list-item-sub-title>{{course.coursePlace}}</mu-list-item-sub-title>
+                </mu-list-item-content>
+                <mu-list-item-action>
+                  <!-- <mu-badge
                                     :content="order.orderStatus|getOrderStatus"
                                     :color="order.orderStatus|getStatusColor"
-                                    ></mu-badge>-->
-                                    <!--<mu-button small round color="green">查看详情</mu-button>-->
-                                </mu-list-item-action>
-                            </mu-list-item>
-                        </mu-col>
-                    </mu-row>
-                </mu-list>
-            </mu-load-more>
-            <mu-card v-show="listSize == 0" style="width: 100%; margin: 0 auto;border-radius: 5px" raised>
-                <mu-card-title title="暂无条目" sub-title></mu-card-title>
-                <mu-card-text>
-                    <mu-button to="/">回到首页</mu-button>
-                </mu-card-text>
-            </mu-card>
-        </mu-container>
-    </div>
+                  ></mu-badge>-->
+                  <!--<mu-button small round color="green">查看详情</mu-button>-->
+                </mu-list-item-action>
+              </mu-list-item>
+            </mu-col>
+          </mu-row>
+        </mu-list>
+      </mu-load-more>
+      <mu-card v-show="listSize == 0" style="width: 100%; margin: 0 auto;border-radius: 5px" raised>
+        <mu-card-title title="暂无条目" sub-title></mu-card-title>
+        <mu-card-text>
+          <mu-button to="/">回到首页</mu-button>
+        </mu-card-text>
+      </mu-card>
+    </mu-container>
+  </div>
 </template>
 
 <script>
     import axios from "axios";
     export default {
-        name: "test",
         data() {
             return {
                 userId: 0,
@@ -82,13 +81,20 @@
                 },
                 refreshing: false,
                 loading: false,
-                courseList: []
+                courseList: [],
+                showAddCourse: false
             };
         },
+ beforeRouteEnter(to, from, next) {
+   next(vm=>{          //  这里的vm指的就是vue实例，可以用来当做this使用
+   vm.refresh();
+   console.log(from);
+    })
+  },
         created: function() {
-            this.fetchData();
             this.getData();
             this.getDataCount();
+            this.roleController();
         },
         methods: {
             navigateTo(val) {
@@ -116,6 +122,7 @@
                 return status;
             },
             toDetail(id) {
+                localStorage.setItem("courseId",id);
                 this.$router.push({
                     name:'courseInfo',
                     path: "/courseInfo",
@@ -185,7 +192,7 @@
                 //this.$refs.container.scrollTop = 0;
                 setTimeout(() => {
                     this.refreshing = false;
-                    this.paperList = [];
+                    this.courseList = [];
                     this.query.page = 1;
                     this.getData();
                     this.getDataCount();
@@ -211,22 +218,27 @@
             },
             addCourse(){
                 this.$router.push("/addCourse");
+            },
+            roleController(){
+                if(localStorage.getItem("ms_roleName")=="老师"){
+                    this.showAddCourse = true;
+                }
             }
         }
     };
 </script>
 
 <style scoped>
-    .paperContainer {
-        padding: 10px;
-    }
-    .paperList {
-        padding: 16px 8px;
-    }
-    .paperItem {
-        border-radius: 5px;
-        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
-        0 1px 10px 0 rgba(0, 0, 0, 0.12);
-        margin: 15px 2px;
-    }
+.paperContainer {
+  padding: 10px;
+}
+.paperList {
+  padding: 16px 8px;
+}
+.paperItem {
+  border-radius: 5px;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+    0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  margin: 15px 2px;
+}
 </style>

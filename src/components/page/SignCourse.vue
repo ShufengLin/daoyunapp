@@ -5,15 +5,49 @@
       <mu-divider></mu-divider>
       <mu-card-text>{{remindInfo}}</mu-card-text>
       <mu-row justify-content="center">
-        <!-- <mu-avatar :size="200" @click="openMap">
-          <img src="../../assets/imgs/work1.jpeg" />
-        </mu-avatar> -->
-    <mu-avatar color="blue200" :size="200" @click="openMap">
-      <mu-icon value="add_location"></mu-icon>
-    </mu-avatar>
+        <!-- <p v-if="colorStatus == 1">
+          <mu-avatar color="blue200" :size="200" @click="openMap">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
+        <p v-else-if="colorStatus == 2">
+          <mu-avatar color="red400" :size="200" @click="stopSign">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
+        <p v-else-if="colorStatus == 3">
+          <mu-avatar color="blueGrey400" :size="200">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
+        <p v-else-if="colorStatus == 4">
+          <mu-avatar color="blue200" :size="200" @click="openMap">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>-->
+        <p v-if="colorStatus == 1">
+          <mu-avatar color="blue200" :size="200" @click="openMap">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
+        <p v-else-if="colorStatus == 2">
+          <mu-avatar color="red400" :size="200" @click="stopSign">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
+        <p v-else-if="colorStatus == 3">
+          <mu-avatar color="blueGrey400" :size="200">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
+        <p v-else-if="colorStatus == 4">
+          <mu-avatar color="blue200" :size="200" @click="openMap">
+            <mu-icon value="add_location"></mu-icon>
+          </mu-avatar>
+        </p>
       </mu-row>
-      <mu-card-title sub-title="签到信息"></mu-card-title>
-      <mu-card-text>{{signInfo}}</mu-card-text>
+      <!-- <mu-card-title sub-title="签到信息"></mu-card-title>
+      <mu-card-text>{{signInfo}}</mu-card-text>-->
       <mu-divider></mu-divider>
       <mu-card-text>{{signDetailInfo}}</mu-card-text>
     </mu-card>
@@ -48,11 +82,12 @@
 import axios from "axios";
 
 export default {
-  name: "SignCourse",
+  name: "signCourse",
   data() {
     return {
+      courseId: parseInt(localStorage.getItem("courseId")),
       remindInfo: "",
-      signInfo: "当前课程暂未发起签到",
+      signInfo: "",
       signDetailInfo: "没有定位信息",
       signStatus: false,
       center: { lng: 0, lat: 0 },
@@ -62,9 +97,18 @@ export default {
         latitude: "",
         address: ""
       },
+      colorStatus: 0,
       zoom: 12,
-      clientHeight: document.documentElement.clientHeight - 350 // 屏幕高度
+      clientHeight: document.documentElement.clientHeight - 350, // 屏幕高度
+      isSign: 0,
+      userId: parseInt(localStorage.getItem("ms_userId"))
     };
+  },
+  created: function() {
+    this.getIsSign();
+    setTimeout(() => {
+      this.roleController();
+    }, 500);
   },
   methods: {
     navigateTo(val) {
@@ -89,19 +133,59 @@ export default {
         this.$toast.warning("请先点击小圆点进行定位");
       } else {
         const loading = this.$loading();
-        this.timer = setTimeout(() => {
-          //设置延迟执行
-          this.$toast.message(
-            "您的位置：" +
-              this.locData.address +
-              this.locData.longitude +
-              "," +
-              this.locData.latitude
-          );
-          this.signDetailInfo = this.locData.address;
-          this.mapVisible = false;
-          loading.close();
-        }, 500);
+        switch (this.colorStatus) {
+          case 1: //教师发起签到情况
+            this.beginSign();
+            this.timer = setTimeout(() => {
+              //window.location.reload();
+              this.roleController();
+              this.signDetailInfo = this.locData.address;
+              this.mapVisible = false;
+              loading.close();
+            }, 500);
+            break;
+          case 2: //教师关闭签到情况
+            // this.timer = setTimeout(() => {
+            //   window.location.reload();
+            //   this.signDetailInfo = this.locData.address;
+            //   this.mapVisible = false;
+            // }, 500);
+            break;
+          case 3: //学生 签到结束
+            // window.location.reload();
+            // this.mapVisible = false;
+            break;
+          case 4: //学生 开始签到
+            this.studentSign();
+            this.timer = setTimeout(() => {
+              //window.location.reload();
+              this.roleController();
+              this.signDetailInfo = this.locData.address;
+              this.mapVisible = false;
+              loading.close();
+            }, 500);
+            break;
+          default:
+            window.location.reload();
+            this.mapVisible = false;
+            break;
+        }
+
+        //loading.close();
+        // const loading = this.$loading();
+        // this.timer = setTimeout(() => {
+        //   //设置延迟执行
+        //   this.$toast.message(
+        //     "您的位置：" +
+        //       this.locData.address +
+        //       this.locData.longitude +
+        //       "," +
+        //       this.locData.latitude
+        //   );
+        //   this.signDetailInfo = this.locData.address;
+        //   this.mapVisible = false;
+        //   loading.close();
+        // }, 500);
       }
     },
     // //点击地图监听
@@ -159,6 +243,139 @@ export default {
     },
     closeMap() {
       this.mapVisible = false;
+    },
+    roleController() {
+      if (localStorage.getItem("ms_roleName") == "老师") {
+        if (this.isSign == 0) {
+          //老师进入页面且课程处于关闭签到的状态
+          this.remindInfo = "请点击签到按钮发起签到";
+          this.colorStatus = 1;
+        } else if (this.isSign == 1) {
+          //老师进入页面且课程处于开始签到的状态
+          this.remindInfo = "请点击签到按钮关闭签到";
+          this.colorStatus = 2;
+        }
+      } else {
+        if (this.isSign == 0) {
+          //学生进入页面课程处于关闭签到的状态
+          this.remindInfo = "本次签到结束";
+          this.colorStatus = 3;
+        } else if (this.isSign == 1) {
+          //学生进入页面课程处于开始签到的状态
+          this.remindInfo = "请点击签到按钮开始签到";
+          this.colorStatus = 4;
+        }
+      }
+    },
+    getIsSign() {
+      //TODO 待加入搜索限定参数
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/course/getIsSign",
+          { courseId: this.courseId },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              this.isSign = res.data.data;
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+    beginSign() {
+      //TODO 待加入搜索限定参数
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/course/beginSign",
+          {
+            courseId: this.courseId,
+            longitude: this.locData.longitude,
+            latitude: this.locData.latitude
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              this.coursedate = res.data.data;
+              this.$toast.success(res.data.msg);
+              this.isSign = 1;
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+    closeSign() {
+      //TODO 待加入搜索限定参数
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/course/closeSign",
+          { courseId: this.courseId },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              this.$toast.success(res.data.msg);
+              this.isSign = 0;
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+    studentSign() {
+      //TODO 待加入搜索限定参数
+      axios
+        .post(
+          "http://localhost:8080/daoyunWeb/course/sign",
+          {
+            courseId: this.courseId,
+            studentId: this.userId,
+            longitude: this.locData.longitude,
+            latitude: this.locData.latitude
+          },
+          { headers: { "Content-Type": "application/json" } }
+        )
+        .then(
+          res => {
+            console.log(res);
+            if (res.status == 200) {
+              this.signStatus = res.data.data;
+              if (res.data.data == 0) {
+                this.$toast.message("不在签到范围内，请重新签到");
+              } else if (res.data.data == 1) {
+                this.$toast.success("签到成功");
+              } else if (res.data.data == 2) {
+                this.$toast.message("您已经签到成功过了，请勿重复签到");
+              }
+            }
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    },
+    stopSign() {
+      const loading = this.$loading();
+      this.closeSign();
+      this.timer = setTimeout(() => {
+        //window.location.reload();
+        this.roleController();
+        this.signDetailInfo = this.locData.address;
+        this.mapVisible = false;
+        loading.close();
+      }, 500);
     }
   }
 };

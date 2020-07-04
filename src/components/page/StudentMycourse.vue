@@ -2,7 +2,7 @@
     <div id="order">
         <mu-container class="paperContainer">
             <mu-row>
-                <mu-text-field v-model="query.userName" placeholder="搜索学生"></mu-text-field>
+                <mu-text-field v-model="query.courseName" placeholder="搜索班课"></mu-text-field>
                 <mu-button icon color="primary" @click="handleSearch">
                     <mu-icon value="search"></mu-icon>
                 </mu-button>
@@ -12,7 +12,7 @@
             </mu-row>
             <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
                 <mu-list textline="three-line" class="paperList">
-                    <mu-sub-header>班课学生</mu-sub-header>
+                    <mu-sub-header>我的班课</mu-sub-header>
                     <mu-row gutter>
                         <mu-col xl="12" lg="12" md="12" sm="12" span="12">
                             <!--:style="'background-color:'+ getStaColor(order.orderStatus)"-->
@@ -20,10 +20,10 @@
                                     avatar
                                     button
                                     :ripple="true"
-                                    class="courseStudentItem"
-                                    v-for="(student,index) in studentList"
-                                    @click="toDetail(student.courseId)"
-                                    :key="student.studentId"
+                                    class="courseItem"
+                                    v-for="(course,index) in courseList"
+                                    @click="toDetail(course.courseId)"
+                                    :key="course.courseId"
                             >
                                 <mu-list-item-action>
                                     <!--<mu-avatar text-color="primary">-->
@@ -36,10 +36,11 @@
                                 </mu-list-item-action>
                                 <mu-list-item-content>
                                     <mu-list-item-title style="color: black;font-size: 1.2em;font-weight: bolder">
-                                        {{ student.studentName }}
+                                        {{ course.courseName }}
                                         <!--<mu-badge :content="order.orderType" color="primary"></mu-badge>-->
                                     </mu-list-item-title>
-                                    <mu-list-item-sub-title>经验值:{{student.studentExp}}</mu-list-item-sub-title>
+                                    <mu-list-item-sub-title>经验值:{{course.studentExp}}</mu-list-item-sub-title>
+                                    <mu-list-item-sub-title>{{course.coursePlace}}</mu-list-item-sub-title>
                                 </mu-list-item-content>
                                 <mu-list-item-action>
                                     <!-- <mu-badge
@@ -56,7 +57,7 @@
             <mu-card v-show="listSize == 0" style="width: 100%; margin: 0 auto;border-radius: 5px" raised>
                 <mu-card-title title="暂无条目" sub-title></mu-card-title>
                 <mu-card-text>
-                    <mu-button to="/mycourse">回到我的班课</mu-button>
+                    <mu-button to="/">回到首页</mu-button>
                 </mu-card-text>
             </mu-card>
         </mu-container>
@@ -66,7 +67,6 @@
 <script>
     import axios from "axios";
     export default {
-        name: "test",
         data() {
             return {
                 open: false,
@@ -76,12 +76,12 @@
                 query: {
                     page: 1,
                     pageSize: 6,
-                    courseId:this.$route.params.Id,
-                    userName: ""
+                    userId:parseInt(localStorage.getItem("ms_userId")),
+                    courseName: ""
                 },
                 refreshing: false,
                 loading: false,
-                studentList: []
+                courseList: []
             };
         },
         created: function() {
@@ -115,11 +115,12 @@
                 return status;
             },
             toDetail(id) {
+                localStorage.setItem("courseId",id);
                 this.$router.push({
-                    path: "/",
-                    name: "",
+                    name:'courseInfo',
+                    path: "/courseInfo",
                     params: {
-                        orderId: id
+                        Id: id
                     }
                 });
             },
@@ -130,12 +131,12 @@
             getData() {
                 axios
                     .post(
-                        "http://localhost:8080/daoyunWeb/courseStudent/getCourseStudentByPage",
+                        "http://localhost:8080/daoyunWeb/course/getStudentOwnCourseByPage",
                         {
                             page: this.query.page,
                             pageSize: this.query.pageSize,
-                            courseId: this.query.courseId,
-                            userName: this.query.userName
+                            userId: this.query.userId,
+                            courseName:this.query.courseName
 
                         },
                         { headers: { "Content-Type": "application/json" } }
@@ -145,8 +146,8 @@
                             console.log(res);
                             if (res.status == 200) {
                                 if (res.data.code == 0) {
-                                    this.studentList = this.studentList.concat(res.data.data);
-                                    this.listSize = this.studentList.length;
+                                    this.courseList = this.courseList.concat(res.data.data);
+                                    this.listSize = this.courseList.length;
                                     this.$toast.success(res.data.msg);
                                 } else if (res.data.code == -2) {
                                     this.$router.push("/login");
@@ -165,10 +166,10 @@
                 //TODO 待加入搜索限定参数
                 axios
                     .post(
-                        "http://localhost:8080/daoyunWeb/courseStudent/getCourseStudentCount",
+                        "http://localhost:8080/daoyunWeb/course/getStudentOwnCourseCount",
                         {
-                            courseId: this.query.courseId,
-                            userName: this.query.userName
+                            userId: this.query.userId,
+                            courseName:this.query.courseName
                         },
                         { headers: { "Content-Type": "application/json" } }
                     )
@@ -186,9 +187,10 @@
             },
             refresh() {
                 this.refreshing = true;
-                //this.$refs.container.scrollTop = 0;
+                // this.$refs.container.scrollTop = 0;
                 setTimeout(() => {
                     this.refreshing = false;
+                    this.courseList = [];
                     this.query.page = 1;
                     this.getData();
                     this.getDataCount();
@@ -207,7 +209,7 @@
                 }, 2000);
             },
             handleSearch() {
-                this.studentList = [];
+                this.courseList = [];
                 this.$set(this.query, "page", 1);
                 this.getData();
                 this.getDataCount();

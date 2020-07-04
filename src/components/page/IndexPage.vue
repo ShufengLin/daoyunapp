@@ -11,10 +11,10 @@
             <mu-button @click="navigateTo('/register')">立即注册</mu-button>
           </p>
           <p v-else-if="isLogin()">
-            <mu-button color="secondary" @click="navigateTo('/course')">
+            <mu-button color="secondary" @click="CourseButtonClick()">
             浏览班课
             </mu-button>
-            <mu-button color="" @click="navigateTo('/mycourse')">查看个人班课</mu-button>
+            <mu-button  color="" @click="MycourseButtonClick()">查看个人班课</mu-button>
           </p>
         </mu-paper>
     <!-- -->
@@ -29,13 +29,17 @@
     return {
       appInfo: {
         appName: "到云",
-        address: ""
-      }
+        address: "",
+      },
+      mycourse:"",
+      course:""
     }
   },
-  created: function() {
+    created: function() {
     this.isLogin()
     this.fetchData()
+      // console.log(this.mycourse)
+      // console.log(this.course)
   },
   methods:{
         isLogin() {
@@ -49,8 +53,34 @@
     navigateTo(val) {
       this.$router.push(val);
     },
-    fetchData(){
-    }
+    fetchData(){},
+    MycourseButtonClick(){
+      let rolename=localStorage.getItem("ms_roleName");
+      if (rolename == "老师"){
+        this.mycourse="/mycourse"
+        console.log(this.mycourse)
+        this.navigateTo(this.mycourse)
+      }
+      if (rolename=="学生"){
+        this.mycourse="/studentmycourse"
+        console.log(this.mycourse)
+        this.navigateTo(this.mycourse)
+      }
+    },
+    CourseButtonClick(){
+      let rolename=localStorage.getItem("ms_roleName");
+      if (rolename == "老师"){
+        this.course="/course"
+        console.log(this.course)
+        this.navigateTo(this.course)
+      }
+      if (rolename=="学生"){
+        this.course="/studentcourse"
+        console.log(this.course)
+        this.navigateTo(this.course)
+      }
+        }
+
 
   }
 }
