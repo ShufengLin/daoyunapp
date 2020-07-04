@@ -165,6 +165,7 @@ export default {
           this.showAttendCourse = false;
           this.showCourseMember = true;
           this.showSign = true;
+          this.showSignInfo = true;
         } else {
           //如果不是，显示参加课程按钮
           this.showAttendCourse = true;
@@ -212,10 +213,16 @@ export default {
         }
       });
     },
-    toTeacherSignInfo(){
-      this.$router.push({
-        path:"/teacherSignInfo"
-      })
+    toTeacherSignInfo() {
+      if (localStorage.getItem("ms_roleName") == "老师") {
+        this.$router.push({
+          path: "/teacherSignInfo"
+        });
+      } else if (localStorage.getItem("ms_roleName") == "学生") {
+        this.$router.push({
+          path: "/studentSignInfo"
+        });
+      }
     },
     attendCourse() {
       axios

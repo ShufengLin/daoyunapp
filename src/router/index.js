@@ -164,6 +164,15 @@ const routes = [{
         component: () =>
         import(/* webpackChunkName: "teacherSignDetail"*/ '../components/page/TeacherSignDetail'),
         meta: {
+          title: '签到详情'
+        }
+      },
+      {
+        path: '/studentSignInfo',
+        name: 'studentSignInfo',
+        component: () =>
+        import(/* webpackChunkName: "studentSignInfo"*/ '../components/page/StudentSignInfo'),
+        meta: {
           title: '签到情况'
         }
       }
