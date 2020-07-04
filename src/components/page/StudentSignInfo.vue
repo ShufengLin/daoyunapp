@@ -8,6 +8,11 @@
       <mu-card-text>{{info.successCount}}</mu-card-text>
       <mu-card-title sub-title="签到失败次数"></mu-card-title>
       <mu-card-text>{{info.failCount}}</mu-card-text>
+      <mu-card-title sub-title="签到完成度"></mu-card-title>
+      <mu-card-text>{{info.progress+"%"}}</mu-card-text>
+      <mu-flex class="demo-linear-progress">
+        <mu-linear-progress mode="determinate" :value="this.info.progress" :size="15" color="green"></mu-linear-progress>
+      </mu-flex>
     </mu-card>
   </div>
 </template>
@@ -24,7 +29,8 @@ export default {
       info: {
         totalCount: 0,
         successCount: 0,
-        failCount: 0
+        failCount: 0,
+        progress:0
       },
       signInfo: []
     };
@@ -80,7 +86,8 @@ export default {
           this.info.successCount++;
         }
       });
-      this.info.failCount = this.info.totalCount-this.info.successCount;
+      this.info.failCount = this.info.totalCount - this.info.successCount;
+      this.info.progress = (this.info.successCount/this.info.totalCount)*100;
     }
   }
 };
