@@ -3,7 +3,7 @@
     <mu-container class="paperContainer">
       <mu-load-more @refresh="refresh" :refreshing="refreshing" :loading="loading" @load="load">
         <mu-list textline="three-line" class="courseSignList">
-          <mu-sub-header>发起的签到记录</mu-sub-header>
+          <mu-sub-header>学生签到情况 打勾表示签到成功</mu-sub-header>
           <mu-row gutter>
             <mu-col xl="12" lg="12" md="12" sm="12" span="12">
               <mu-list-item
@@ -12,21 +12,22 @@
                 :ripple="true"
                 class="paperItem"
                 v-for="(sign,index) in courseSignList"
-                @click="toDetail(sign.courseSignId)"
-                :key="sign.courseSignId"
+                :key="index"
               >
                 <mu-list-item-action>
-                  <mu-button style="min-width: 20px" color="primary">
-                    {{ index + 1 }}
-                  </mu-button>
+                  <mu-button style="min-width: 20px" color="primary">{{ index + 1 }}</mu-button>
                 </mu-list-item-action>
+
                 <mu-list-item-content>
-                  <mu-list-item-title style="color: black;font-size: 0.7em;font-weight: bolder">
-                    {{ sign.beginTime | formatDate1}}
-                  </mu-list-item-title>
+                  <mu-list-item-title
+                    style="color: black;font-size: 0.7em;font-weight: bolder"
+                  >{{sign.userName}}</mu-list-item-title>
+                  <mu-list-item-sub-title>{{ sign.signTime | formatDate1}}</mu-list-item-sub-title>
                 </mu-list-item-content>
                 <mu-list-item-action>
+                  <mu-icon value="check" size="32" color="blue400" v-show="sign.signStatus == 0"></mu-icon>
                 </mu-list-item-action>
+                <mu-list-item-action></mu-list-item-action>
               </mu-list-item>
             </mu-col>
           </mu-row>
@@ -57,7 +58,7 @@ export default {
       query: {
         page: 1,
         pageSize: 6,
-        courseId: parseInt(localStorage.getItem("courseId"))
+        courseSignId: parseInt(localStorage.getItem("courseSignId"))
       },
       refreshing: false,
       loading: false,
@@ -94,10 +95,13 @@ export default {
       return status;
     },
     toDetail(id) {
-        localStorage.setItem("courseSignId",id);
-      this.$router.push({
-        path: "/teacherSignDetail",
-      });
+      //   this.$router.push({
+      //     path: "/",
+      //     name: "",
+      //     params: {
+      //       orderId: id
+      //     }
+      //   });
     },
     test() {
       this.$toast.message("test");
@@ -105,7 +109,7 @@ export default {
     getData() {
       axios
         .post(
-          "http://localhost:8080/daoyunWeb/course/getCourseSignTimeByCourseId",
+          "http://localhost:8080/daoyunWeb/course/getCourseSignByCourseSignId",
           this.query,
           { headers: { "Content-Type": "application/json" } }
         )
@@ -134,7 +138,7 @@ export default {
       //TODO 待加入搜索限定参数
       axios
         .post(
-          "http://localhost:8080/daoyunWeb/course/getCourseSignTimeCount",
+          "http://localhost:8080/daoyunWeb/course/getCourseSignCount",
           this.query,
           { headers: { "Content-Type": "application/json" } }
         )
@@ -178,7 +182,7 @@ export default {
       this.$set(this.query, "page", 1);
       this.getData();
       this.getDataCount();
-    },
+    }
   },
   filters: {
     formatDate1(time) {
