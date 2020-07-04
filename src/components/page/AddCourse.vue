@@ -35,7 +35,6 @@
 <script>
     import axios from 'axios';
     export default {
-        name: "AddCourse",
         data() {
             return {
                 validateForm: {
@@ -49,9 +48,16 @@
                     notNull: [
                         { validate: val => !!val, message: "请输入信息", trigger: "blur" }
                     ]
-                }
+                },
+                fromPath:""
             };
         },
+ beforeRouteEnter(to, from, next) {
+   next(vm=>{          //  这里的vm指的就是vue实例，可以用来当做this使用
+   console.log(from);
+   vm.fromPath = from.path;
+    })
+  },
         methods: {
             navigateTo(val) {
                 this.$router.push(val);
@@ -88,7 +94,7 @@
                             console.log(res);
                             if (res.status == 200) {
                                 if (res.data.code == 0) {
-                                    this.$router.push("/course");
+                                    this.$router.push(this.fromPath);
                                 } else if (res.data.code == -2) {
                                     this.$router.push("/login");
                                     this.$toast.error(res.data.msg);

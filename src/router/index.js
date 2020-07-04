@@ -73,7 +73,8 @@ const routes = [{
       component: () =>
           import ( /* webpackChunkName: "test" */ '../components/page/Course.vue'),
       meta: {
-          title: '班课页面'
+          title: '班课页面',
+          name:'course'
       }
   },
   {
@@ -81,7 +82,8 @@ const routes = [{
       component: () =>
           import ( /* webpackChunkName: "test" */ '../components/page/StudentCourse.vue'),
       meta: {
-          title: '班课页面'
+          title: '班课页面',
+          name:'studentcourse'
       }
   },
     {
@@ -89,7 +91,8 @@ const routes = [{
       component: () =>
           import ( /* webpackChunkName: "test" */ '../components/page/Mycourse.vue'),
       meta: {
-          title: '我的班课'
+          title: '我的班课',
+          name:'mycourse'
       }
     },
   {
@@ -97,7 +100,8 @@ const routes = [{
       component: () =>
           import ( /* webpackChunkName: "test" */ '../components/page/StudentMycourse.vue'),
       meta: {
-          title: '我的班课'
+          title: '我的班课',
+          name:'studentmycourse'
       }
   },
   {

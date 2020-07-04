@@ -70,7 +70,6 @@
 <script>
     import axios from "axios";
     export default {
-        name: "test",
         data() {
             return {
                 userId: 0,

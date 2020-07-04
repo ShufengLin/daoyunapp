@@ -67,7 +67,6 @@
 <script>
     import axios from "axios";
     export default {
-        name: "test",
         data() {
             return {
                 open: false,
@@ -86,6 +85,12 @@
                 showAddCourse:false
             };
         },
+ beforeRouteEnter(to, from, next) {
+   next(vm=>{          //  这里的vm指的就是vue实例，可以用来当做this使用
+   vm.refresh();
+   console.log(from);
+    })
+  },
         created: function() {
             this.fetchData();
             this.getData();
