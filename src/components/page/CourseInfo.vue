@@ -33,6 +33,9 @@
         <mu-button flat color="primary" @click="toSign" v-if="showSign">
           <mu-icon left value="person_pin"></mu-icon>签到
         </mu-button>
+        <mu-button flat color="primary" @click="toTeacherSignInfo" v-if="showSignInfo">
+          <mu-icon left value="equalizer"></mu-icon>签到情况
+        </mu-button>
       </mu-flex>
     </mu-card>
   </div>
@@ -62,8 +65,9 @@ export default {
       showAttendCourse: false,
       showCourseMember: false,
       showSign: false,
+      showSignInfo: false,
       studentCourse: {},
-      isSign:0
+      isSign: 0
     };
   },
   created: function() {
@@ -115,19 +119,22 @@ export default {
         );
     },
     toSign() {
-      if (localStorage.getItem("ms_roleName") == "老师"){//如果是老师，可以进入签到页面进行发起签到或者关闭签到
+      if (localStorage.getItem("ms_roleName") == "老师") {
+        //如果是老师，可以进入签到页面进行发起签到或者关闭签到
         this.pushSign();
-      }
-      else{//如果是学生
-        if(this.isSign == 1){//课程状态为开启签到时，可以进入签到页面进行签到
+      } else {
+        //如果是学生
+        if (this.isSign == 1) {
+          //课程状态为开启签到时，可以进入签到页面进行签到
           this.pushSign();
-        }else{//课程状态为关闭签到时，不能进入签到页面签到
+        } else {
+          //课程状态为关闭签到时，不能进入签到页面签到
           this.$toast.message("还没有开始签到");
         }
       }
     },
-    pushSign(){
-              this.$router.push({
+    pushSign() {
+      this.$router.push({
         name: "signCourse",
         path: "/signCourse",
         params: {
@@ -139,15 +146,17 @@ export default {
       if (localStorage.getItem("ms_roleName") == "老师") {
         if (parseInt(localStorage.getItem("ms_userId")) == this.info.teachId) {
           //如果是登录用户为老师，验证是不是该老师的课程
-          //如果是,显示班课成员，签到按钮
+          //如果是,显示班课成员，签到按钮，签到情况
           this.showAttendCourse = false;
           this.showCourseMember = true;
           this.showSign = true;
+          this.showSignInfo = true;
         } else {
           //如果不是该老师的课程，则禁用所有按钮，只能查看课程信息
           this.showAttendCourse = false;
           this.showCourseMember = false;
           this.showSign = false;
+          this.showSignInfo = false;
         }
       } else {
         //如果登录用户为学生,验证这个课程是不是学生正在参与的课程
@@ -202,6 +211,11 @@ export default {
           Id: this.courseId
         }
       });
+    },
+    toTeacherSignInfo(){
+      this.$router.push({
+        path:"/teacherSignInfo"
+      })
     },
     attendCourse() {
       axios
