@@ -129,14 +129,12 @@ export default {
       window.map = map;
     },
     sign() {
-      
       if (this.locData.address == "") {
         this.$toast.warning("请先点击小圆点进行定位");
       } else {
         const loading = this.$loading();
         switch (this.colorStatus) {
           case 1: //教师发起签到情况
-          
             this.beginSign();
             this.timer = setTimeout(() => {
               //window.location.reload();
@@ -172,7 +170,7 @@ export default {
             this.mapVisible = false;
             break;
         }
-        
+
         //loading.close();
         // const loading = this.$loading();
         // this.timer = setTimeout(() => {
@@ -378,7 +376,6 @@ export default {
         this.mapVisible = false;
         loading.close();
       }, 500);
-      
     }
   }
 };
